@@ -1,0 +1,1 @@
+void dumpHex(const char *file_name);
