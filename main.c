@@ -4,12 +4,13 @@
 #include "hexDumper.h"
 
 int main(int argc, char **argv) {
-    if (argc < 2) {
-        fprintf(stderr, "usage: hexdumper <file>\n");
-        return 1;
-    }
+    FILE *file;
 
-    FILE *file = fopen(argv[1], "rb");
+    if (argc < 2) {
+        file = stdin;
+    } else {
+        file = fopen(argv[1], "rb");
+    }
 
     if (!file) {
         perror("fopen");
