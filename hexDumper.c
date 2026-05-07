@@ -28,6 +28,9 @@ void dumpHex(FILE *file) {
             printf("%c", isprint(buf[i]) ? buf[i] : '.');
         }
         printf("|\n");
+        offset += n;
 
     }
+    printf("\n%zu bytes\n", offset);
+
 }
