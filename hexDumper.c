@@ -3,6 +3,8 @@
 #include "hexDumper.h"
 #include <ctype.h>
 
+#define UNUSED(x) (void)(x)
+
 void dumpHex(FILE *file) {
 
     uint8_t buf[16];
@@ -33,4 +35,9 @@ void dumpHex(FILE *file) {
     }
     printf("\n%zu bytes\n", offset);
 
+}
+
+void reverseDump(FILE *file_name) { 
+    UNUSED(file_name);
+    printf("test"); 
 }
