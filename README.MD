@@ -31,9 +31,9 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | Flag | Description |
 |------|-------------|
 | `-h` | Hex dump a file or stdin |
-| `-r` | Reverse mode — reconstruct binary from a hex dump |
-| `-C` | Compact output (no ASCII column) |
-| `-L` | Lowercase hex output |
+| `-r` | Reverse mode — reconstruct binary from a hex dump | Not yet implemented | 
+| `-C` | Compact output (no ASCII column) | Not yet implemented | 
+| `-L` | Lowercase hex output | Not yet implemented | 
 
 
 ### Examples
