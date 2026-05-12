@@ -5,39 +5,39 @@
 
 #define UNUSED(x) (void)(x)
 
-void dumpHex(FILE *file) {
+void dumpHex(FILE *file, FILE *output) {
 
     uint8_t buf[16];
     size_t n, offset = 0;
 
     while ((n = fread(buf, 1, 16, file)) > 0) {
-        printf("%08zX  ", offset);
+        fprintf(output, "%08zX  ", offset);
 
         for (size_t i = 0; i < n; i++) {
 
             if (i < n) {
-                printf("%02X ", buf[i]);
+                fprintf(output, "%02X ", buf[i]);
             } else {
-                printf("   "); 
+                fprintf(output, "   "); 
             }
             if (i == 7) {
-                printf(" ");
+                fprintf(output, " ");
             }
         }
         
-        printf(" |");
+        fprintf(output, " |");
         for (size_t i = 0; i < n; i++) {
-            printf("%c", isprint(buf[i]) ? buf[i] : '.');
+            fprintf(output, "%c", isprint(buf[i]) ? buf[i] : '.');
         }
-        printf("|\n");
+        fprintf(output, "|\n");
         offset += n;
 
     }
-    printf("\n%zu bytes\n", offset);
+    fprintf(output, "\n%zu bytes\n", offset);
 
 }
 
 void reverseDump(FILE *file_name) { 
     UNUSED(file_name);
     printf("test"); 
-}
+} 

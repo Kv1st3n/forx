@@ -7,50 +7,65 @@
 
 int main(int argc, char **argv) {
 
-    int flag_h = 0;
-    int flag_r = 0;
-    int flag_o = 0;
-    int opt;
-    while((opt = getopt(argc, argv, "hCLr")) != -1) {
-
-        switch(opt){
-            case 'h': flag_h = 1; break;
-            case 'r': flag_r = 1; break;
-            case 'o': flag_o = 1; break;
+    int   flag_h = 0;
+    int   flag_o = 0;
+    char *outpath = NULL;
+    int   opt;
+    
+    while ((opt = getopt(argc, argv, "ho:rCL")) != -1) {
+        switch (opt) {
+            case 'h':
+                flag_h = 1;
+                break;
+            case 'o':
+                flag_o  = 1;
+                outpath = optarg;
+                break;
+            case 'r':
+                // reverseDump();
+                break;
             case 'C':
                 break;
             case 'L':
                 break;
-            case '?':
-                fprintf(stderr, "unknown flag: -%c\n", optopt);
+            default:
+                fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
                 return EXIT_FAILURE;
-
         }
     }
 
-    FILE *file;
+    FILE *input;
 
     if (optind < argc) {
-        file = fopen(argv[optind], "rb");
-        if (!file) { 
-            perror("fopen"); return EXIT_FAILURE; 
-        }
-
+        input = fopen(argv[optind], "rb"); 
+        if (!input) { perror("fopen input"); return EXIT_FAILURE; }
     } else {
-        file = stdin;
+        input = stdin;
+    }
+
+    FILE *output;
+
+    if (flag_o && outpath) {
+        output = fopen(outpath, "w");
+        if (!output) { perror("fopen output"); return EXIT_FAILURE; }
+    } else {
+        output = stdout;
     }
 
     if (flag_h) {
-        dumpHex(file);
+        dumpHex(input, output);
+    } else {
+        fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
+        return EXIT_FAILURE;
     }
 
-    if (flag_r) {
-        reverseDump(file);
+    if (input  != stdin)  {
+        fclose(input);
     }
 
-    if (file != stdin) {
-        fclose(file);
+    if (output != stdout) {
+        fclose(output);
     }
 
     return EXIT_SUCCESS;
-}
+} 

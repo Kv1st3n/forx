@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-void dumpHex(FILE *file_name);
+void dumpHex(FILE *file, FILE *output);
 void reverseDump(FILE *file_name);
 
-#endif
+#endif 
