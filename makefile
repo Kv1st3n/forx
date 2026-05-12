@@ -7,6 +7,10 @@ TARGET  = hexDumper
 SRCS    = main.c hexDumper.c
 OBJS    = $(SRCS:.c=.o)
 
+ifeq ($(CC),gcc)
+	CFLAGS += Wjump-misses-init -Wlogical-op
+endif
+
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
