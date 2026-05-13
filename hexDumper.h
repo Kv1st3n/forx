@@ -4,6 +4,6 @@
 #include <stdio.h>
 
 void dumpHex(FILE *file, FILE *output);
-void reverseDump(FILE *file_name);
+void reverseDump(FILE *file_name, FILE *output);
 
 #endif 

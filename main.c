@@ -9,6 +9,7 @@ int main(int argc, char **argv) {
 
     int   flag_h = 0;
     int   flag_o = 0;
+    int   flag_r = 0;
     char *outpath = NULL;
     int   opt;
     
@@ -22,7 +23,7 @@ int main(int argc, char **argv) {
                 outpath = optarg;
                 break;
             case 'r':
-                // reverseDump();
+                flag_r = 1;
                 break;
             case 'C':
                 break;
@@ -54,8 +55,10 @@ int main(int argc, char **argv) {
 
     if (flag_h) {
         dumpHex(input, output);
+    } else if (flag_r) {
+        reverseDump(input, output);
     } else {
-        fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
+        fprintf(stderr, "usage: hexDumper [-h] [-o outfile] [-r] <file>\n");
         return EXIT_FAILURE;
     }
 

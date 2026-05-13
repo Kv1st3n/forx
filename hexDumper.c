@@ -2,8 +2,7 @@
 #include <stdint.h>
 #include "hexDumper.h"
 #include <ctype.h>
-
-#define UNUSED(x) (void)(x)
+#include <string.h>
 
 void dumpHex(FILE *file, FILE *output) {
 
@@ -37,7 +36,43 @@ void dumpHex(FILE *file, FILE *output) {
 
 }
 
-void reverseDump(FILE *file_name) { 
-    UNUSED(file_name);
-    printf("test"); 
+void reverseDump(FILE *file_name, FILE *output) { 
+
+    char fileLine[256];
+
+    while (fgets(fileLine, sizeof(fileLine), file_name) != NULL) {
+
+        // safeguard to ensure the code reads the hex values
+        if (strlen(fileLine) < 10 || fileLine[8] != ' ') {
+            continue;
+        }
+
+        char *ptr = strchr(fileLine, ' ');
+        if (!ptr) {
+            continue;
+        }
+
+        char *ascii_col = strchr(fileLine, '|');
+        if (!ascii_col) {
+            continue;
+        }
+
+
+        while (ptr < ascii_col) {
+            if (isspace((unsigned char)*ptr)) {
+                ptr++;
+                continue;
+            }
+
+            unsigned char byte;
+            if (sscanf(ptr, "%2hhX", &byte) == 1) {
+                fwrite(&byte, 1, 1, output);
+                ptr += 2;
+            } else {
+                ptr++;
+            }
+        }
+    }
 } 
+
+
