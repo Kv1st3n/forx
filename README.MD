@@ -31,10 +31,10 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | Flag | Description | Notes |
 |------|-------------|-------------|
 | `-h` | Hex dump a file or stdin | Implemented | 
-| `-r` | Reverse mode — reconstruct binary from a hex dump | Not yet implemented | 
+| `-r` | Reverse mode — reconstruct binary from a hex dump | Implemented | 
 | `-C` | Compact output (no ASCII column) | Not yet implemented | 
 | `-L` | Lowercase hex output | Not yet implemented | 
-| `-o` | Outputs a file containing the dump | Not yet implemented | 
+| `-o` | Outputs a file containing the dump | Implemented | 
 
 
 ### Examples
@@ -45,6 +45,12 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 
 # Read from stdin
 echo "hello" | ./hexDumper -h
+
+# Dump a file and create a new file containing the dump
+./hexDumper -h -o dump.txt test.txt 
+
+# Revert a dumped hex file to its original ASCII text
+./hexDumper -r -o recovered.txt dump.txt
 
 ```
 
