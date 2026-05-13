@@ -57,8 +57,14 @@ void reverseDump(FILE *file_name, FILE *output) {
             continue;
         }
 
+        iterateFileForReverse(ptr, ascii_col, output);
 
-        while (ptr < ascii_col) {
+
+    }
+} 
+
+void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
+    while (ptr < ascii_col) {
             if (isspace((unsigned char)*ptr)) {
                 ptr++;
                 continue;
@@ -72,7 +78,5 @@ void reverseDump(FILE *file_name, FILE *output) {
                 ptr++;
             }
         }
-    }
-} 
-
+}
 
