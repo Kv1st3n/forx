@@ -10,6 +10,8 @@ int main(int argc, char **argv) {
     int   flag_h = 0;
     int   flag_o = 0;
     int   flag_r = 0;
+    int   flag_L = 0;
+    int   lower_case = 0;
     char *outpath = NULL;
     int   opt;
     
@@ -28,6 +30,7 @@ int main(int argc, char **argv) {
             case 'C':
                 break;
             case 'L':
+                flag_L = 1;
                 break;
             default:
                 fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
@@ -53,8 +56,12 @@ int main(int argc, char **argv) {
         output = stdout;
     }
 
+    if (flag_L) {
+        lower_case = 1;
+    }
+
     if (flag_h) {
-        dumpHex(input, output);
+        dumpHex(input, output, lower_case);
     } else if (flag_r) {
         reverseDump(input, output);
     } else {

@@ -4,18 +4,29 @@
 #include <ctype.h>
 #include <string.h>
 
-void dumpHex(FILE *file, FILE *output) {
+void dumpHex(FILE *file, FILE *output, int lower_case) {
 
     uint8_t buf[16];
     size_t n, offset = 0;
 
     while ((n = fread(buf, 1, 16, file)) > 0) {
-        fprintf(output, "%08zX  ", offset);
+
+        if (lower_case == 1) {
+            fprintf(output, "%08zx  ", offset);
+        } else {
+            fprintf(output, "%08zX  ", offset);
+        }
 
         for (size_t i = 0; i < n; i++) {
 
             if (i < n) {
-                fprintf(output, "%02X ", buf[i]);
+
+                if (lower_case == 1) {
+                    fprintf(output, "%02x ", buf[i]);
+                } else {
+                    fprintf(output, "%02X ", buf[i]);
+                }
+                
             } else {
                 fprintf(output, "   "); 
             }
@@ -57,8 +68,7 @@ void reverseDump(FILE *file_name, FILE *output) {
             continue;
         }
 
-        iterateFileForReverse(ptr, ascii_col, output);
-
+        convertReversedHexToAscii(ptr, ascii_col, output);
 
     }
 } 
