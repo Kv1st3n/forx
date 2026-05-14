@@ -33,7 +33,7 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | `-h` | Hex dump a file or stdin | Implemented | 
 | `-r` | Reverse mode — reconstruct binary from a hex dump | Implemented | 
 | `-C` | Compact output (no ASCII column) | Not yet implemented | 
-| `-L` | Lowercase hex output | Not yet implemented | 
+| `-L` | Lowercase hex output | Implemented | 
 | `-o` | Outputs a file containing the dump | Implemented | 
 
 
@@ -51,6 +51,9 @@ echo "hello" | ./hexDumper -h
 
 # Revert a dumped hex file to its original ASCII text
 ./hexDumper -r -o recovered.txt dump.txt
+
+# Use lower case flag
+./hexDumper -h -L -o  dump2.txt test.png 
 
 ```
 
