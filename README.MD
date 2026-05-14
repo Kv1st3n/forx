@@ -32,9 +32,10 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 |------|-------------|-------------|
 | `-h` | Hex dump a file or stdin | Implemented | 
 | `-r` | Reverse mode — reconstruct binary from a hex dump | Implemented | 
-| `-C` | Compact output (no ASCII column) | Not yet implemented | 
+| `-C` | Compact output (no ASCII column) | Implemented | 
 | `-L` | Lowercase hex output | Implemented | 
 | `-o` | Outputs a file containing the dump | Implemented | 
+| `-i` | File type identifier | Not yet mplemented | 
 
 
 ### Examples
@@ -62,7 +63,7 @@ The output is divided into the memory offset, hex values (capitalized) and print
 
 ```zsh
 # Example command
-./hexDumper hexDumper.c
+./hexDumper -h -o dump.txt hexDumper.c
 
 # Output
 00000000  23 69 6E 63 6C 75 64 65  20 3C 73 74 64 69 6F 2E  |#include <stdio.|
@@ -70,9 +71,23 @@ The output is divided into the memory offset, hex values (capitalized) and print
 00000020  69 6E 74 2E 68 3E 0A 23  69 6E 63 6C 75 64 65 20  |int.h>.#include |
 00000030  22 68 65 78 44 75 6D 70  65 72 2E 68 22 0A 23 69  |"hexDumper.h".#i|
 00000040  6E 63 6C 75 64 65 20 3C  63 74 79 70 65 2E 68 3E  |nclude <ctype.h>|
-00000050  0A 0A 23 64 65 66 69 6E  65 20 55 4E 55 53 45 44  |..#define UNUSED|
-00000060  28 78 29 20 28 76 6F 69  64 29 28 78 29 0A 0A 76  |(x) (void)(x)..v|
-00000070  6F 69 64 20 64 75 6D 70  48 65 78 28 46 49 4C 45  |oid dumpHex(FILE|
+00000050  0A 23 69 6E 63 6C 75 64  65 20 3C 73 74 72 69 6E  |.#include <strin|
+00000060  67 2E 68 3E 0A 0A 76 6F  69 64 20 64 75 6D 70 48  |g.h>..void dumpH|
+00000070  65 78 28 46 49 4C 45 20  2A 66 69 6C 65 2C 20 46  |ex(FILE *file, F|
+#continues...
+
+# Example command with compact (-C)
+./hexDumper -h -C -o dump.txt hexDumper.c
+
+# Output
+00000000  23 69 6E 63 6C 75 64 65  20 3C 73 74 64 69 6F 2E 
+00000010  68 3E 0A 23 69 6E 63 6C  75 64 65 20 3C 73 74 64 
+00000020  69 6E 74 2E 68 3E 0A 23  69 6E 63 6C 75 64 65 20 
+00000030  22 68 65 78 44 75 6D 70  65 72 2E 68 22 0A 23 69 
+00000040  6E 63 6C 75 64 65 20 3C  63 74 79 70 65 2E 68 3E 
+00000050  0A 23 69 6E 63 6C 75 64  65 20 3C 73 74 72 69 6E 
+00000060  67 2E 68 3E 0A 0A 76 6F  69 64 20 64 75 6D 70 48 
+00000070  65 78 28 46 49 4C 45 20  2A 66 69 6C 65 2C 20 46 
 #continues...
 
 ```
