@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-void dumpHex(FILE *file, FILE *output, int lower_case);
+void dumpHex(FILE *file, FILE *output, int lower_case, int compact);
 void reverseDump(FILE *file_name, FILE *output);
 void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output);
 

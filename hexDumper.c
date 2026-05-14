@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
-void dumpHex(FILE *file, FILE *output, int lower_case) {
+void dumpHex(FILE *file, FILE *output, int lower_case, int compact) {
 
     uint8_t buf[16];
     size_t n, offset = 0;
@@ -34,13 +34,21 @@ void dumpHex(FILE *file, FILE *output, int lower_case) {
                 fprintf(output, " ");
             }
         }
-        
-        fprintf(output, " |");
-        for (size_t i = 0; i < n; i++) {
-            fprintf(output, "%c", isprint(buf[i]) ? buf[i] : '.');
+
+        if (compact == 0) {
+
+            fprintf(output, " |");
+
+            for (size_t i = 0; i < n; i++) {
+                fprintf(output, "%c", isprint(buf[i]) ? buf[i] : '.');
+            }
+            fprintf(output, "|\n");
+            offset += n;
+            
+        } else {
+            fprintf(output, "\n");
+            offset += n;
         }
-        fprintf(output, "|\n");
-        offset += n;
 
     }
     fprintf(output, "\n%zu bytes\n", offset);

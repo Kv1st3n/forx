@@ -10,6 +10,8 @@ int main(int argc, char **argv) {
     int   flag_h = 0;
     int   flag_o = 0;
     int   flag_r = 0;
+    int   flag_C = 0;
+    int   compact = 0;
     int   flag_L = 0;
     int   lower_case = 0;
     char *outpath = NULL;
@@ -28,6 +30,7 @@ int main(int argc, char **argv) {
                 flag_r = 1;
                 break;
             case 'C':
+                flag_C = 1;
                 break;
             case 'L':
                 flag_L = 1;
@@ -60,8 +63,12 @@ int main(int argc, char **argv) {
         lower_case = 1;
     }
 
+    if (flag_C) {
+        compact = 1;
+    }
+
     if (flag_h) {
-        dumpHex(input, output, lower_case);
+        dumpHex(input, output, lower_case, compact);
     } else if (flag_r) {
         reverseDump(input, output);
     } else {
