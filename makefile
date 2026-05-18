@@ -4,7 +4,7 @@ CFLAGS  = -Wall -Wextra -fsanitize=address -g -Wpedantic \
           -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
           -Wredundant-decls -Wnested-externs -Wmissing-include-dirs
 TARGET  = hexDumper
-SRCS    = main.c hexDumper.c
+SRCS    = main.c hexDumper.c scanner.c
 OBJS    = $(SRCS:.c=.o)
 
 ifeq ($(CC),gcc)

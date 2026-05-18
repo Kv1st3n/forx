@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <ctype.h>
 #include "hexDumper.h"
+#include "scanner.h"
 
 int main(int argc, char **argv) {
 
@@ -14,13 +15,21 @@ int main(int argc, char **argv) {
     int   compact = 0;
     int   flag_L = 0;
     int   lower_case = 0;
+    int   flag_i = 0;
+    int   flag_d = 0;
+    const char  *dir_name;
+
+
     char *outpath = NULL;
     int   opt;
     
-    while ((opt = getopt(argc, argv, "ho:rCL")) != -1) {
+    while ((opt = getopt(argc, argv, "hiod:rCL")) != -1) {
         switch (opt) {
             case 'h':
                 flag_h = 1;
+                break;
+            case 'i':
+                flag_i = 1;
                 break;
             case 'o':
                 flag_o  = 1;
@@ -34,6 +43,9 @@ int main(int argc, char **argv) {
                 break;
             case 'L':
                 flag_L = 1;
+                break;
+            case 'd':
+                flag_d = 1;
                 break;
             default:
                 fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
@@ -67,16 +79,25 @@ int main(int argc, char **argv) {
         compact = 1;
     }
 
-    if (flag_h) {
+    if (flag_i)
+        identifyFile(input, output);
+
+    if (flag_h)
         dumpHex(input, output, lower_case, compact);
-    } else if (flag_r) {
+
+    if (flag_r)
         reverseDump(input, output);
-    } else {
-        fprintf(stderr, "usage: hexDumper [-h] [-o outfile] [-r] <file>\n");
+
+    if (!flag_i && !flag_h && !flag_r) {
+        fprintf(stderr, "usage: hexDumper [-h] [-i] [-o outfile] [-r] <file>\n");
         return EXIT_FAILURE;
     }
 
-    if (input  != stdin)  {
+    if (flag_d) {
+        scanDirectory(dir_name, input, output);
+    }
+
+    if (input != stdin)  {
         fclose(input);
     }
 
