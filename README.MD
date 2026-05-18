@@ -35,7 +35,8 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | `-C` | Compact output (no ASCII column) | Implemented | 
 | `-L` | Lowercase hex output | Implemented | 
 | `-o` | Outputs a file containing the dump | Implemented | 
-| `-i` | File type identifier | Not yet mplemented | 
+| `-i` | File type identifier | Implemented | 
+| `-d` | Directory scanner | Implemented | 
 
 
 ### Examples
