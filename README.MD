@@ -1,5 +1,5 @@
 # HexDumper
-HexDumper is a simple CLI-based hexadecimal dumper written in C, similar to `xxd`, but simpler.  
+HexDumper (name will change) is a simple CLI-based tool for hexadecimal dumping and file identification written in C. 
 Developed on macOS using clang (clang-1700.4.4.1).
 
 >[!IMPORTANT]
@@ -37,6 +37,13 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | `-o` | Outputs a file containing the dump | Implemented | 
 | `-i` | File type identifier | Implemented | 
 | `-d` | Directory scanner | Implemented | 
+
+### Todos
+| Task | Description | Notes | Status |
+|------|-------------|-------------|------|
+| File Size | Print file size | Not yet implemented | WIP |
+| Checksum | Print MD5 and SHA256 of the file | Not yet implemented | Not started |
+| GUI | Make a GUI for the tool| Not yet implemented | Not started |
 
 
 ### Examples
