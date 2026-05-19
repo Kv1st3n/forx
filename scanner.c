@@ -27,7 +27,7 @@ void identifyFile(FILE *input, FILE *output) {
 } 
 
 
-void scanDirectory(const char *dir_name, FILE *input, FILE *output) {
+void scanDirectory(const char *dir_name, FILE *output) {
 
     DIR *dir = opendir(dir_name);
     struct dirent *entry;
@@ -39,7 +39,7 @@ void scanDirectory(const char *dir_name, FILE *input, FILE *output) {
 
     while ((entry = readdir(dir)) != NULL) {
 
-        if (strcmp(entry -> d_name, ".") || strcmp(entry -> d_name, "..")) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0){
             continue;
         }
 
@@ -49,9 +49,13 @@ void scanDirectory(const char *dir_name, FILE *input, FILE *output) {
         struct stat path_stat;
         
         if (stat(path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode)) {
-            scanDirectory(path, input, output);
+            scanDirectory(path, output);
         } else {
-            identifyFile(input, output);
+            FILE *fp = fopen(path, "rb");
+            if (!fp) { perror(path); continue; }
+            fprintf(output, "%s: ", path);
+            identifyFile(fp, output);
+            fclose(fp);
         }
 
     }

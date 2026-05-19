@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
                 break;
             case 'd':
                 flag_d = 1;
+                dir_name = optarg;
                 break;
             default:
                 fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
@@ -79,22 +80,25 @@ int main(int argc, char **argv) {
         compact = 1;
     }
 
-    if (flag_i)
-        identifyFile(input, output);
-
-    if (flag_h)
-        dumpHex(input, output, lower_case, compact);
-
-    if (flag_r)
-        reverseDump(input, output);
-
-    if (!flag_i && !flag_h && !flag_r) {
-        fprintf(stderr, "usage: hexDumper [-h] [-i] [-o outfile] [-r] <file>\n");
-        return EXIT_FAILURE;
+    if (flag_d) {
+        scanDirectory(dir_name, output);
     }
 
-    if (flag_d) {
-        scanDirectory(dir_name, input, output);
+    if (flag_i) {
+        identifyFile(input, output);
+    }
+
+    if (flag_h) {
+        dumpHex(input, output, lower_case, compact);
+    }
+
+    if (flag_r) {
+        reverseDump(input, output);
+    }
+
+    if (!flag_d && !flag_i && !flag_h && !flag_r) {
+        fprintf(stderr, "usage: hexDumper [-h] [-i] [-d dir] [-o outfile] [-r] <file>\n");
+        return EXIT_FAILURE;
     }
 
     if (input != stdin)  {
