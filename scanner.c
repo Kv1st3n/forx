@@ -52,7 +52,11 @@ void scanDirectory(const char *dir_name, FILE *output) {
             scanDirectory(path, output);
         } else {
             FILE *fp = fopen(path, "rb");
-            if (!fp) { perror(path); continue; }
+
+            if (!fp) { 
+                perror(path); continue; 
+            }
+            
             fprintf(output, "%s: ", path);
             identifyFile(fp, output);
             fclose(fp);
