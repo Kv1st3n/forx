@@ -4,9 +4,11 @@
 #include <ctype.h>
 #include <string.h>
 
+typedef uint8_t u8;
+
 void dumpHex(FILE *file, FILE *output, int lower_case, int compact) {
 
-    uint8_t buf[16];
+    u8 buf[16];
     size_t n, offset = 0;
 
     while ((n = fread(buf, 1, 16, file)) > 0) {
@@ -44,7 +46,7 @@ void dumpHex(FILE *file, FILE *output, int lower_case, int compact) {
             }
             fprintf(output, "|\n");
             offset += n;
-            
+
         } else {
             fprintf(output, "\n");
             offset += n;

@@ -8,8 +8,10 @@
 #include "signatures.h"
 #include "scanner.h"
 
+typedef uint8_t u8;
+
 void identifyFile(FILE *input, FILE *output) {
-    uint8_t buffer[16];
+    u8 buffer[16];
 
     size_t n = fread(buffer, 1, 16, input);
 
