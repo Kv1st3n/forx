@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     char *outpath = NULL;
     int   opt;
     
-    while ((opt = getopt(argc, argv, "hiod:rCL")) != -1) {
+    while ((opt = getopt(argc, argv, "hio:d:rCL")) != -1) {
         switch (opt) {
             case 'h':
                 flag_h = 1;
