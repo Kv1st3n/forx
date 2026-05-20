@@ -41,8 +41,8 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 ### Todos
 | Task | Description | Notes | Status |
 |------|-------------|-------------|------|
-| File Size | Print file size | Not yet implemented | WIP |
-| Checksum | Print MD5 and SHA256 of the file | Not yet implemented | Not started |
+| Cleanup | Overall cleanup of code | Including proper comments | WIP |
+| Checksum | Print MD5 and SHA256 of the file | Not yet implemented | WIP |
 | GUI | Make a GUI for the tool| Not yet implemented | Not started |
 
 
