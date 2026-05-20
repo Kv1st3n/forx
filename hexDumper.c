@@ -98,5 +98,4 @@ void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
                 ptr++;
             }
         }
-}
-
+} 
