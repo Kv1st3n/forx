@@ -9,22 +9,35 @@
 #include "scanner.h"
 
 typedef uint8_t u8;
+typedef int32_t i32;
 
 void identifyFile(FILE *input, FILE *output) {
     u8 buffer[16];
-
+    i32 size;
     size_t n = fread(buffer, 1, 16, input);
 
     rewind(input);
 
     for (size_t i = 0; i < SINGATURE_COUNT; i++ ) {
         if (n >= database[i].len && memcmp(buffer, database[i].sig, database[i].len) == 0) {
-            fprintf(output, "Type: %s\n", database[i].name);
+
+            size = fileSize(input);
+
+            fprintf(output, "Type: %s | Size: %d bytes \n", database[i].name, size);
             return;
         }
     }
-
 } 
+
+long int fileSize(FILE *input) {
+
+    fseek(input, 0L, SEEK_END);
+
+    i32 size = ftell(input);
+
+    return size;
+
+}
 
 
 void scanDirectory(const char *dir_name, FILE *output) {
@@ -56,7 +69,7 @@ void scanDirectory(const char *dir_name, FILE *output) {
             if (!fp) { 
                 perror(path); continue; 
             }
-            
+
             fprintf(output, "%s: ", path);
             identifyFile(fp, output);
             fclose(fp);
