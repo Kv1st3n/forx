@@ -19,11 +19,17 @@ void identifyFile(FILE *input, FILE *output) {
     rewind(input);
 
     for (size_t i = 0; i < SINGATURE_COUNT; i++ ) {
+
         if (n >= database[i].len && memcmp(buffer, database[i].sig, database[i].len) == 0) {
 
             size = fileSize(input);
 
             fprintf(output, "Type: %s | Size: %d bytes \n", database[i].name, size);
+            return;
+        } else {
+            size = fileSize(input);
+
+            fprintf(output, "Type: Unknown | Magic: %s | Size: %d bytes \n", buffer, size);
             return;
         }
     }
