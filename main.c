@@ -8,44 +8,48 @@
 
 int main(int argc, char **argv) {
 
-    int   flag_h = 0;
-    int   flag_o = 0;
-    int   flag_r = 0;
-    int   flag_C = 0;
+    int   flag_hexDump = 0;
+    int   flag_output = 0;
+    int   flag_reverseHex = 0;
+    int   flag_Compact = 0;
     int   compact = 0;
-    int   flag_L = 0;
+    int   flag_LowerCase = 0;
     int   lower_case = 0;
-    int   flag_i = 0;
-    int   flag_d = 0;
+    int   flag_identify = 0;
+    int   flag_directoryScan = 0;
+    int   flag_hexByteOutput = 0;
     const char  *dir_name;
 
 
     char *outpath = NULL;
     int   opt;
     
-    while ((opt = getopt(argc, argv, "hio:d:rCL")) != -1) {
+    while ((opt = getopt(argc, argv, "hio:d:BrCL")) != -1) {
         switch (opt) {
             case 'h':
-                flag_h = 1;
+                flag_hexDump = 1;
                 break;
             case 'i':
-                flag_i = 1;
+                flag_identify = 1;
                 break;
             case 'o':
-                flag_o  = 1;
+                flag_output  = 1;
                 outpath = optarg;
                 break;
+            case 'B':
+                flag_hexByteOutput = 1;
+                break;
             case 'r':
-                flag_r = 1;
+                flag_reverseHex = 1;
                 break;
             case 'C':
-                flag_C = 1;
+                flag_Compact = 1;
                 break;
             case 'L':
-                flag_L = 1;
+                flag_LowerCase = 1;
                 break;
             case 'd':
-                flag_d = 1;
+                flag_directoryScan = 1;
                 dir_name = optarg;
                 break;
             default:
@@ -65,38 +69,41 @@ int main(int argc, char **argv) {
 
     FILE *output;
 
-    if (flag_o && outpath) {
+    if (flag_output && outpath) {
         output = fopen(outpath, "w");
         if (!output) { perror("fopen output"); return EXIT_FAILURE; }
     } else {
         output = stdout;
     }
 
-    if (flag_L) {
+    // rewrite / improve <- feels redundant
+    if (flag_LowerCase) {
         lower_case = 1;
     }
 
-    if (flag_C) {
+    // rewrite / improve <- feels redundant
+    if (flag_Compact) {
         compact = 1;
     }
 
-    if (flag_d) {
+    if (flag_directoryScan) {
         scanDirectory(dir_name, output);
     }
 
-    if (flag_i) {
+    if (flag_identify) {
         identifyFile(input, output);
     }
 
-    if (flag_h) {
-        dumpHex(input, output, lower_case, compact);
+    if (flag_hexDump) {
+        dumpHex(input, output, lower_case, compact, flag_hexByteOutput);
     }
 
-    if (flag_r) {
+    if (flag_reverseHex) {
         reverseDump(input, output);
     }
 
-    if (!flag_d && !flag_i && !flag_h && !flag_r) {
+    // maybe update
+    if (!flag_directoryScan && !flag_identify && !flag_hexDump && !flag_reverseHex) {
         fprintf(stderr, "usage: hexDumper [-h] [-i] [-d dir] [-o outfile] [-r] <file>\n");
         return EXIT_FAILURE;
     }

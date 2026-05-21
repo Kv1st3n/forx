@@ -6,7 +6,7 @@
 
 typedef uint8_t u8;
 
-void dumpHex(FILE *file, FILE *output, int lower_case, int compact) {
+void dumpHex(FILE *file, FILE *output, int lower_case, int compact, int byteOutput) {
 
     u8 buf[16];
     size_t n, offset = 0;
@@ -53,7 +53,10 @@ void dumpHex(FILE *file, FILE *output, int lower_case, int compact) {
         }
 
     }
-    fprintf(output, "\n%zu bytes\n", offset);
+
+    if (byteOutput == 1) {
+        fprintf(output, "\n%zu bytes\n", offset);
+    }
 
 }
 
