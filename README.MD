@@ -64,6 +64,9 @@ echo "hello" | ./hexDumper -h
 # Use lower case flag
 ./hexDumper -h -L -o  dump2.txt test.png 
 
+# If you want to get byte size for the hexdump
+./hexDumper -h -o dump.txt -B hexDumper.c
+
 ```
 
 ## Example Output
@@ -97,6 +100,9 @@ The output is divided into the memory offset, hex values (capitalized) and print
 00000060  67 2E 68 3E 0A 0A 76 6F  69 64 20 64 75 6D 70 48 
 00000070  65 78 28 46 49 4C 45 20  2A 66 69 6C 65 2C 20 46 
 #continues...
+# Will end with this if -B is includes
+2351 bytes
+
 
 # Example command with directory scan (-d)
 ./hexDumper -d /testdir -o
