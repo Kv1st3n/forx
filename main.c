@@ -12,9 +12,7 @@ int main(int argc, char **argv) {
     int   flag_output = 0;
     int   flag_reverseHex = 0;
     int   flag_Compact = 0;
-    int   compact = 0;
     int   flag_LowerCase = 0;
-    int   lower_case = 0;
     int   flag_identify = 0;
     int   flag_directoryScan = 0;
     int   flag_hexByteOutput = 0;
@@ -76,16 +74,6 @@ int main(int argc, char **argv) {
         output = stdout;
     }
 
-    // rewrite / improve <- feels redundant
-    if (flag_LowerCase) {
-        lower_case = 1;
-    }
-
-    // rewrite / improve <- feels redundant
-    if (flag_Compact) {
-        compact = 1;
-    }
-
     if (flag_directoryScan) {
         scanDirectory(dir_name, output);
     }
@@ -95,7 +83,7 @@ int main(int argc, char **argv) {
     }
 
     if (flag_hexDump) {
-        dumpHex(input, output, lower_case, compact, flag_hexByteOutput);
+        dumpHex(input, output, flag_LowerCase, flag_Compact, flag_hexByteOutput);
     }
 
     if (flag_reverseHex) {
