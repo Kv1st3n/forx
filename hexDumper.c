@@ -88,17 +88,17 @@ void reverseDump(FILE *file_name, FILE *output) {
 
 void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
     while (ptr < ascii_col) {
-            if (isspace((unsigned char)*ptr)) {
-                ptr++;
-                continue;
-            }
-
-            unsigned char byte;
-            if (sscanf(ptr, "%2hhX", &byte) == 1) {
-                fwrite(&byte, 1, 1, output);
-                ptr += 2;
-            } else {
-                ptr++;
-            }
+        if (isspace((unsigned char)*ptr)) {
+            ptr++;
+            continue;
         }
+
+        unsigned char byte;
+        if (sscanf(ptr, "%2hhX", &byte) == 1) {
+            fwrite(&byte, 1, 1, output);
+            ptr += 2;
+        } else {
+            ptr++;
+        }
+    }
 } 
