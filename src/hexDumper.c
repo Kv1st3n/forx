@@ -6,6 +6,8 @@
 
 typedef uint8_t u8;
 
+#define MIN_LENGTH 4
+
 void dumpHex(FILE *file, FILE *output, int lower_case, int compact, int byteOutput) {
 
     u8 buf[16];
@@ -102,3 +104,4 @@ void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
         }
     }
 } 
+
