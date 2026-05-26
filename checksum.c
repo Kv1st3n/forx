@@ -5,6 +5,8 @@
 
 typedef uint8_t u8;
 
+// todo, update these with the non-deprecated ones
+
 void printMD5Checksum(FILE *input, FILE *output) {
     u8 buf[4096];
     size_t len;
