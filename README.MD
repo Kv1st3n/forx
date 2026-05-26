@@ -37,12 +37,14 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | `-o` | Outputs a file containing the dump | Implemented | 
 | `-i` | File type identifier | Implemented | 
 | `-d` | Directory scanner | Implemented | 
+| `-M` | MD5 Checksum | Implemented | 
+| `-1` | SHA1 Checksum | Implemented | 
+| `-2` | SHA256 Checksum | Implemented | 
 
 ### Todos
 | Task | Description | Notes | Status |
 |------|-------------|-------------|------|
 | Cleanup | Overall cleanup of code | Including proper comments | WIP |
-| Checksum | Print MD5 and SHA256 of the file | Not yet implemented | WIP |
 | GUI | Make a GUI for the tool| Not yet implemented | Not started |
 
 
