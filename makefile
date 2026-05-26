@@ -1,18 +1,20 @@
 CC      = clang
-CFLAGS  = -Wall -Wextra -fsanitize=address -g -Wpedantic \
+CFLAGS  = -Wall -Wextra -g -Wpedantic \
           -Wformat=2 -Wno-unused-parameter -Wshadow \
           -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
-          -Wredundant-decls -Wnested-externs -Wmissing-include-dirs
+          -Wredundant-decls -Wnested-externs -Wmissing-include-dirs \
+          -I/opt/homebrew/opt/openssl/include
+LDFLAGS = -L/opt/homebrew/opt/openssl/lib -lssl -lcrypto
 TARGET  = hexDumper
-SRCS    = main.c hexDumper.c scanner.c
+SRCS    = main.c hexDumper.c scanner.c checksum.c
 OBJS    = $(SRCS:.c=.o)
 
 ifeq ($(CC),gcc)
-	CFLAGS += Wjump-misses-init -Wlogical-op
+	CFLAGS += -Wjump-misses-init -Wlogical-op
 endif
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
