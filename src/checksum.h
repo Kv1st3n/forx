@@ -3,9 +3,7 @@
 
 #include <stdio.h>
 
-void printMD5Checksum(FILE *file, FILE *output);
-void printSHA1Checksum(FILE *file, FILE *output);
-void printSHA256Checksum(FILE *file, FILE *output);
+void printChecksum(FILE *input, int flagValue, FILE *output);
 
 #endif 
 

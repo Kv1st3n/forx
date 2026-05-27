@@ -21,16 +21,9 @@ void dumpHex(FILE *file, FILE *output, int lower_case, int compact, int byteOutp
             fprintf(output, "%08zX  ", offset);
         }
 
-        for (size_t i = 0; i < n; i++) {
-
+        for (size_t i = 0; i < 16; i++) {
             if (i < n) {
-
-                if (lower_case == 1) {
-                    fprintf(output, "%02x ", buf[i]);
-                } else {
-                    fprintf(output, "%02X ", buf[i]);
-                }
-                
+                fprintf(output, lower_case ? "%02x " : "%02X ", buf[i]);
             } else {
                 fprintf(output, "   "); 
             }
@@ -40,26 +33,21 @@ void dumpHex(FILE *file, FILE *output, int lower_case, int compact, int byteOutp
         }
 
         if (compact == 0) {
-
             fprintf(output, " |");
-
             for (size_t i = 0; i < n; i++) {
                 fprintf(output, "%c", isprint(buf[i]) ? buf[i] : '.');
             }
             fprintf(output, "|\n");
             offset += n;
-
         } else {
             fprintf(output, "\n");
             offset += n;
         }
-
     }
 
     if (byteOutput == 1) {
         fprintf(output, "\n%zu bytes\n", offset);
     }
-
 }
 
 void reverseDump(FILE *file_name, FILE *output) { 
@@ -104,4 +92,7 @@ void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
         }
     }
 } 
+
+
+
 

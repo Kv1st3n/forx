@@ -22,12 +22,14 @@ int main(int argc, char **argv) {
     int   flag_LowerCase = 0;
     //int   flag_stringExtract = 0;
 
+    int checksumFlagValue = 0;
     // m
-    int flag_MD5 = 0;
+    int checksumFlagValueMD5 = 0;
     // 1
-    int flag_SHA1 = 0;
+    int checksumFlagValueSHA1 = 0;
     // 2
-    int flag_SHA256 = 0;
+    int checksumFlagValueSHA256 = 0;
+
 
     const char  *dir_name;
 
@@ -67,20 +69,20 @@ int main(int argc, char **argv) {
                 //flag_stringExtract = 1;
                 //break;
             case 'M':
-                flag_MD5 = 1;
+                checksumFlagValueMD5 = 1;
                 break;
             case '1':
-                flag_SHA1 = 1;
+                checksumFlagValueSHA1 = 1;
                 break;
             case '2':
-                flag_SHA256 = 1;
+                checksumFlagValueSHA256 = 1;
                 break;
             default:
                 fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
                 return EXIT_FAILURE;
         }
     }
-    
+
     FILE *input;
 
     if (optind < argc) {
@@ -118,18 +120,22 @@ int main(int argc, char **argv) {
         rewind(input);
     }
 
-    if (flag_MD5) {
-        printMD5Checksum(input, output);
+    if (checksumFlagValueMD5) {
+        checksumFlagValue = 1;
+        printChecksum(input, checksumFlagValue, output);
         rewind(input);
     }
 
-    if (flag_SHA1) {
-        printSHA1Checksum(input, output);
+    if (checksumFlagValueSHA1) {
+        checksumFlagValue = 2;
+        printChecksum(input, checksumFlagValue, output);
         rewind(input);
     }
 
-    if (flag_SHA256) {
-        printSHA256Checksum(input, output);
+    if (checksumFlagValueSHA256) {
+        checksumFlagValue = 3;
+        printChecksum(input, checksumFlagValue, output);
+        rewind(input);
     }
 
     //if (flag_stringExtract) {
@@ -138,7 +144,7 @@ int main(int argc, char **argv) {
 
     // maybe update
     if (!flag_directoryScan && !flag_identify && !flag_hexDump && !flag_reverseHex &&
-    !flag_MD5 && !flag_SHA1 && !flag_SHA256) {
+    !checksumFlagValueMD5 && !checksumFlagValueSHA1 && !checksumFlagValueSHA256) {
 
         fprintf(stderr,
             "usage: hexDumper [-h] [-i] [-d dir] [-o outfile] [-r] <file>\n");

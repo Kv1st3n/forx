@@ -13,34 +13,29 @@ typedef int32_t i32;
 
 void identifyFile(FILE *input, FILE *output) {
     u8 buffer[16];
-    i32 size;
     size_t n = fread(buffer, 1, 16, input);
-
     rewind(input);
+    long int size = fileSize(input);
 
-    for (size_t i = 0; i < SINGATURE_COUNT; i++ ) {
-
-        if (n >= database[i].len && memcmp(buffer, database[i].sig, database[i].len) == 0) {
-
-            size = fileSize(input);
-
-            fprintf(output, "Type: %s | Size: %d bytes \n", database[i].name, size);
-            return;
-        } else {
-            size = fileSize(input);
-
-            fprintf(output, "Type: Unknown | Magic: %s | Size: %d bytes \n", buffer, size);
+    for (size_t i = 0; i < SINGATURE_COUNT; i++) {
+        if (n >= database[i].len &&
+            memcmp(buffer, database[i].sig, database[i].len) == 0) {
+            fprintf(output, "Type: %s | Size: %ld bytes\n",
+                    database[i].name, size);
             return;
         }
     }
-} 
+
+    fprintf(output, "Type: Unknown | Magic: %02X %02X %02X %02X | Size: %ld bytes\n",
+            buffer[0], buffer[1], buffer[2], buffer[3], size);
+}
 
 long int fileSize(FILE *input) {
 
     fseek(input, 0L, SEEK_END);
 
     i32 size = ftell(input);
-
+    rewind(input);
     return size;
 
 }
