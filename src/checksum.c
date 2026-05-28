@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <openssl/md5.h>
-#include <openssl/sha.h>
 #include <openssl/evp.h>
 
 typedef uint8_t u8;
