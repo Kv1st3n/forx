@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "hexDumper.h"
+#include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+
+#include "hexDumper.h"
 
 typedef uint8_t u8;
 
@@ -94,5 +96,49 @@ void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
 } 
 
 
+void extractStrings(FILE *file_name, FILE *output) {
+    int byte;
+    long byteOffset = 0;
+    char *buffer = malloc(sizeof(char) * 4); 
+    size_t bufferCapacity = (sizeof(char) * 4);
+    size_t runLength = 0;
+    size_t runStart = 0;
 
+
+    while ((byte = fgetc(file_name)) != EOF) {
+
+        if (isprint(byte)) {
+
+            if (runLength == 0) {
+                runStart = byteOffset;
+            }
+
+            if (runLength >= bufferCapacity - 1) {
+                bufferCapacity *= 2;
+                buffer =  realloc(buffer, bufferCapacity);
+            }
+
+            buffer[runLength] = byte;
+            runLength++;
+
+        } else {
+            
+            if (runLength >= MIN_LENGTH) {
+                buffer[runLength] = '\0';
+                fprintf(output, "%08lX  %s\n", runStart, buffer);
+            }
+            runLength = 0;
+
+        }
+        byteOffset++;
+
+    }
+
+    if (runLength >= MIN_LENGTH) {
+        buffer[runLength] = '\0';
+        fprintf(output, "%08lX  %s\n", runStart, buffer);
+    }
+
+    free(buffer);
+}
 

@@ -6,6 +6,6 @@
 void dumpHex(FILE *file, FILE *output, int lower_case, int compact, int byteOutput);
 void reverseDump(FILE *file_name, FILE *output);
 void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output);
-//void extractStrings(FILE *file_name);
+void extractStrings(FILE *file_name, FILE *output);
 
 #endif 

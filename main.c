@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     int   flag_reverseHex = 0;
     int   flag_Compact = 0;
     int   flag_LowerCase = 0;
-    //int   flag_stringExtract = 0;
+    int   flag_stringExtract = 0;
 
     int checksumFlagValue = 0;
     // m
@@ -65,9 +65,9 @@ int main(int argc, char **argv) {
                 flag_directoryScan = 1;
                 dir_name = optarg;
                 break;
-            //case 'S':
-                //flag_stringExtract = 1;
-                //break;
+            case 'S':
+                flag_stringExtract = 1;
+                break;
             case 'M':
                 checksumFlagValueMD5 = 1;
                 break;
@@ -138,13 +138,13 @@ int main(int argc, char **argv) {
         rewind(input);
     }
 
-    //if (flag_stringExtract) {
-    //    extractStrings(input);
-    //}
+    if (flag_stringExtract) {
+        extractStrings(input, output);
+    }
 
     // maybe update
     if (!flag_directoryScan && !flag_identify && !flag_hexDump && !flag_reverseHex &&
-    !checksumFlagValueMD5 && !checksumFlagValueSHA1 && !checksumFlagValueSHA256) {
+    !checksumFlagValueMD5 && !checksumFlagValueSHA1 && !checksumFlagValueSHA256 && !flag_stringExtract) {
 
         fprintf(stderr,
             "usage: hexDumper [-h] [-i] [-d dir] [-o outfile] [-r] <file>\n");
