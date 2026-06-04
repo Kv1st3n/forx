@@ -1,5 +1,5 @@
 # HexDumper
-HexDumper (name will change) is a simple CLI-based tool for hexadecimal dumping and file identification written in C. 
+HexDumper (name will change) is a simple CLI-based tool for hexadecimal dumping and file identification written in C/C++17. 
 Developed on macOS using clang (clang-1700.4.4.1).
 
 >[!IMPORTANT]
