@@ -37,6 +37,7 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | `-o` | Outputs a file containing the dump | Implemented | 
 | `-i` | File type identifier | Implemented | 
 | `-d` | Directory scanner | Implemented | 
+| `-S` | String extractor | Implemented | 
 | `-M` | MD5 Checksum | Implemented | 
 | `-1` | SHA1 Checksum | Implemented | 
 | `-2` | SHA256 Checksum | Implemented | 
