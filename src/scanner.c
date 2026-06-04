@@ -11,11 +11,11 @@
 typedef uint8_t u8;
 typedef int32_t i32;
 
-void identifyFile(FILE *input, FILE *output) {
+void identify_file(FILE *input, FILE *output) {
     u8 buffer[16];
     size_t n = fread(buffer, 1, 16, input);
     rewind(input);
-    long int size = fileSize(input);
+    long int size = file_size(input);
 
     for (size_t i = 0; i < SINGATURE_COUNT; i++) {
         if (n >= database[i].len &&
@@ -30,7 +30,7 @@ void identifyFile(FILE *input, FILE *output) {
             buffer[0], buffer[1], buffer[2], buffer[3], size);
 }
 
-long int fileSize(FILE *input) {
+long int file_size(FILE *input) {
 
     fseek(input, 0L, SEEK_END);
 
@@ -41,7 +41,7 @@ long int fileSize(FILE *input) {
 }
 
 
-void scanDirectory(const char *dir_name, FILE *output) {
+void scan_directory(const char *dir_name, FILE *output) {
 
     DIR *dir = opendir(dir_name);
     struct dirent *entry;
@@ -63,7 +63,7 @@ void scanDirectory(const char *dir_name, FILE *output) {
         struct stat path_stat;
         
         if (stat(path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode)) {
-            scanDirectory(path, output);
+            scan_directory(path, output);
         } else {
             FILE *fp = fopen(path, "rb");
 
@@ -72,7 +72,7 @@ void scanDirectory(const char *dir_name, FILE *output) {
             }
 
             fprintf(output, "%s: ", path);
-            identifyFile(fp, output);
+            identify_file(fp, output);
             fclose(fp);
         }
 

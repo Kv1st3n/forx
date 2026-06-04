@@ -5,7 +5,7 @@
 
 typedef uint8_t u8;
 
-void printChecksum(FILE *input, int flagValue, FILE *output) {
+void print_checksum(FILE *input, int flagValue, FILE *output) {
     unsigned char buffer[4096];
     size_t bytes_read;
     EVP_MD_CTX *mdctx;

@@ -10,12 +10,12 @@ typedef uint8_t u8;
 
 #define MIN_LENGTH 4
 
-void dumpHex(FILE *file, FILE *output, int lower_case, int compact, int byteOutput) {
+void dump_hex(FILE *input, FILE *output, int lower_case, int compact, int byteOutput) {
 
     u8 buf[16];
     size_t n, offset = 0;
 
-    while ((n = fread(buf, 1, 16, file)) > 0) {
+    while ((n = fread(buf, 1, 16, input)) > 0) {
 
         if (lower_case == 1) {
             fprintf(output, "%08zx  ", offset);
@@ -52,7 +52,7 @@ void dumpHex(FILE *file, FILE *output, int lower_case, int compact, int byteOutp
     }
 }
 
-void reverseDump(FILE *file_name, FILE *output) { 
+void reverse_dump(FILE *file_name, FILE *output) { 
 
     char fileLine[256];
 
@@ -73,12 +73,12 @@ void reverseDump(FILE *file_name, FILE *output) {
             continue;
         }
 
-        convertReversedHexToAscii(ptr, ascii_col, output);
+        convert_reversed_hex_to_ascii(ptr, ascii_col, output);
 
     }
 } 
 
-void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
+void convert_reversed_hex_to_ascii(char *ptr, char *ascii_col, FILE *output) {
     while (ptr < ascii_col) {
         if (isspace((unsigned char)*ptr)) {
             ptr++;
@@ -96,7 +96,7 @@ void convertReversedHexToAscii(char *ptr, char *ascii_col, FILE *output) {
 } 
 
 
-void extractStrings(FILE *file_name, FILE *output) {
+void extract_strings(FILE *input, FILE *output) {
     int byte;
     long byteOffset = 0;
     char *buffer = malloc(sizeof(char) * 4); 
@@ -105,7 +105,7 @@ void extractStrings(FILE *file_name, FILE *output) {
     size_t runStart = 0;
 
 
-    while ((byte = fgetc(file_name)) != EOF) {
+    while ((byte = fgetc(input)) != EOF) {
 
         if (isprint(byte)) {
 

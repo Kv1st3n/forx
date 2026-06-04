@@ -22,16 +22,16 @@ int main(int argc, char **argv) {
     int   flag_LowerCase = 0;
     int   flag_stringExtract = 0;
 
-    int checksumFlagValue = 0;
+    int   checksum_flag_value = 0;
     // m
-    int checksumFlagValueMD5 = 0;
+    int   checksum_MD5 = 0;
     // 1
-    int checksumFlagValueSHA1 = 0;
+    int   checksum_SHA1 = 0;
     // 2
-    int checksumFlagValueSHA256 = 0;
+    int   checksum_SHA256 = 0;
 
 
-    const char  *dir_name;
+    const char *dir_name;
 
 
     char *outpath = NULL;
@@ -69,13 +69,13 @@ int main(int argc, char **argv) {
                 flag_stringExtract = 1;
                 break;
             case 'M':
-                checksumFlagValueMD5 = 1;
+                checksum_MD5 = 1;
                 break;
             case '1':
-                checksumFlagValueSHA1 = 1;
+                checksum_SHA1 = 1;
                 break;
             case '2':
-                checksumFlagValueSHA256 = 1;
+                checksum_SHA256 = 1;
                 break;
             default:
                 fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
@@ -87,7 +87,9 @@ int main(int argc, char **argv) {
 
     if (optind < argc) {
         input = fopen(argv[optind], "rb"); 
-        if (!input) { perror("fopen input"); return EXIT_FAILURE; }
+        if (!input) { 
+            perror("fopen input"); return EXIT_FAILURE; 
+        }
     } else {
         input = stdin;
     }
@@ -96,55 +98,57 @@ int main(int argc, char **argv) {
 
     if (flag_output && outpath) {
         output = fopen(outpath, "w");
-        if (!output) { perror("fopen output"); return EXIT_FAILURE; }
+        if (!output) { 
+            perror("fopen output"); return EXIT_FAILURE; 
+        }
     } else {
         output = stdout;
     }
 
     if (flag_directoryScan) {
-        scanDirectory(dir_name, output);
+        scan_directory(dir_name, output);
     }
 
     if (flag_identify) {
-        identifyFile(input, output);
-        rewind(input);          // reset for next reader
+        identify_file(input, output);
+        rewind(input); 
     }
 
     if (flag_hexDump) {
-        dumpHex(input, output, flag_LowerCase, flag_Compact, flag_hexByteOutput);
+        dump_hex(input, output, flag_LowerCase, flag_Compact, flag_hexByteOutput);
         rewind(input);
     }
 
     if (flag_reverseHex) {
-        reverseDump(input, output);
+        reverse_dump(input, output);
         rewind(input);
     }
 
-    if (checksumFlagValueMD5) {
-        checksumFlagValue = 1;
-        printChecksum(input, checksumFlagValue, output);
+    if (checksum_MD5) {
+        checksum_flag_value = 1;
+        print_checksum(input, checksum_flag_value, output);
         rewind(input);
     }
 
-    if (checksumFlagValueSHA1) {
-        checksumFlagValue = 2;
-        printChecksum(input, checksumFlagValue, output);
+    if (checksum_SHA1) {
+        checksum_flag_value = 2;
+        print_checksum(input, checksum_flag_value, output);
         rewind(input);
     }
 
-    if (checksumFlagValueSHA256) {
-        checksumFlagValue = 3;
-        printChecksum(input, checksumFlagValue, output);
+    if (checksum_SHA256) {
+        checksum_flag_value = 3;
+        print_checksum(input, checksum_flag_value, output);
         rewind(input);
     }
 
     if (flag_stringExtract) {
-        extractStrings(input, output);
+        extract_strings(input, output);
     }
 
     // maybe update
     if (!flag_directoryScan && !flag_identify && !flag_hexDump && !flag_reverseHex &&
-    !checksumFlagValueMD5 && !checksumFlagValueSHA1 && !checksumFlagValueSHA256 && !flag_stringExtract) {
+    !checksum_MD5 && !checksum_SHA1 && !checksum_SHA256 && !flag_stringExtract) {
 
         fprintf(stderr,
             "usage: hexDumper [-h] [-i] [-d dir] [-o outfile] [-r] <file>\n");

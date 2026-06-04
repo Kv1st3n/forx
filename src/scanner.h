@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 
-void identifyFile(FILE *input, FILE *output);
-void scanDirectory(const char *dir_name, FILE *output);
-long int fileSize(FILE *input);
+void identify_file(FILE *input, FILE *output);
+void scan_directory(const char *dir_name, FILE *output);
+long int file_size(FILE *input);
 
 #endif 
 

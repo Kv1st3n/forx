@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-void printChecksum(FILE *input, int flagValue, FILE *output);
+void print_checksum(FILE *input, int flagValue, FILE *output);
 
 #endif 
 
