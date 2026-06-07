@@ -1,70 +1,87 @@
-#ifdef __cplusplus
-
-#include <string>
-#include <cstdio>
-#include <stdexcept>
-
 #include "file_handler.h"
+#include <string>
+#include <stdexcept>
+#include <cstdio>
 
-class BinaryFile {
-    FILE *file = nullptr;
-    size_t _size = 0;
 
+BinaryFile::BinaryFile(const std::string &path) {
+    file = fopen(path.c_str(), "rb");
+    if (!file)
+        throw std::runtime_error("cannot open: " + path);
+    fseek(file, 0, SEEK_END);
+    _size = (size_t)ftell(file);
+    ::rewind(file);
+}
 
-public:
-    explicit BinaryFile::BinaryFile(const std::string &path) {
-        file = fopen(path.c_str(), "rb");
-
-        if (!file) {
-            throw std::runtime_error("Failed to open file");
-        }
-
-        fseek(file, 0, SEEK_END);
-        _size = (size_t)ftell(file);
-        ::rewind(file); 
-    }  
-
-    BinaryFile::~BinaryFile() {
-        if (file) {
-            fclose(file);
-            file = nullptr;
-        }
+BinaryFile::~BinaryFile() {
+    if (file) {
+        fclose(file);
+        file = nullptr;
     }
+}
 
-    BinaryFile::BinaryFile(const BinaryFile&) = delete;
-    BinaryFile &operator=(const BinaryFile&) = delete;  
+bool BinaryFile::is_open() const noexcept {
+    return file != nullptr;
+}
 
-     // checks if file is open
-    bool is_open() const noexcept {
-        return file != nullptr;
+size_t BinaryFile::read_file(uint8_t *buf, size_t n) {
+    return fread(buf, 1, n, file);
+}
+
+
+int BinaryFile::peek_file(uint8_t *buf, size_t n) {
+    size_t pos = tell();
+    size_t got = read_file(buf, n);
+
+    seek_file(pos);
+    return (int)got;
+}
+
+void BinaryFile::seek_file(size_t offset) {
+    fseek(file, (long)offset, SEEK_SET);
+}
+
+void BinaryFile::rewind_file() {
+    ::rewind(file);
+}
+
+size_t BinaryFile::tell() const {
+    return (size_t)ftell(file);
+}
+
+size_t BinaryFile::file_size() const {
+    return _size;
+}
+
+bool BinaryFile::eof() const {
+    return tell() >= _size;
+}
+
+FILE *BinaryFile::raw() const {
+    return file;
+}
+
+// C bridge
+BinaryFileHandle *bfile_open(const char *path) {
+    try {
+        return reinterpret_cast<BinaryFileHandle *>(new BinaryFile(path));
+    } catch (...) {
+        return nullptr;
     }
+}
 
-    // reads n bytes 
-    size_t read_file(uint8_t *buf, size_t n);
+void bfile_close(BinaryFileHandle *h) {
+    delete reinterpret_cast<BinaryFile *>(h);
+}
 
-    // reads n bytes before rewinding, used to identify file by checking the first 16-bytes
-    int peek_file(uint8_t *buf, size_t n);
+FILE *bfile_raw(BinaryFileHandle *h) {
+    return reinterpret_cast<BinaryFile *>(h)->raw();
+}
 
-    // moves to an absolute byte position in the file
-    void seek_file(size_t offset);
+void bfile_seek(BinaryFileHandle *h, size_t offset) {
+    reinterpret_cast<BinaryFile *>(h)->seek_file(offset);
+}
 
-    // goes back to byte 0
-    void rewind();
-
-    // returns the current byte position
-    size_t tell();
-
-    // returns the file size measured in the constructor
-    size_t size();
-
-    // returns true if the current position equals the file size
-    bool eof();
-
-    // returns the underlying FILE *
-    FILE *raw();
-
-};
-
-
-
-#endif
+size_t bfile_size(BinaryFileHandle *h) {
+    return reinterpret_cast<BinaryFile *>(h)->file_size();
+}
