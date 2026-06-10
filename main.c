@@ -8,6 +8,8 @@
 #include "scanner.h"
 #include "checksum.h"
 
+#include "file_handler.h"
+
 int main(int argc, char **argv) {
 
     int   flag_hexDump = 0;
@@ -83,13 +85,16 @@ int main(int argc, char **argv) {
         }
     }
 
+    BinaryFileHandle *b_file = NULL;
     FILE *input;
 
     if (optind < argc) {
-        input = fopen(argv[optind], "rb"); 
-        if (!input) { 
-            perror("fopen input"); return EXIT_FAILURE; 
+        b_file = bfile_open(argv[optind]);
+        if (!b_file) { 
+            perror("bfile_open"); 
+            return EXIT_FAILURE; 
         }
+        input = bfile_raw(b_file);
     } else {
         input = stdin;
     }
@@ -99,7 +104,8 @@ int main(int argc, char **argv) {
     if (flag_output && outpath) {
         output = fopen(outpath, "w");
         if (!output) { 
-            perror("fopen output"); return EXIT_FAILURE; 
+            perror("fopen output"); 
+            return EXIT_FAILURE; 
         }
     } else {
         output = stdout;
@@ -127,19 +133,19 @@ int main(int argc, char **argv) {
     if (checksum_MD5) {
         checksum_flag_value = 1;
         print_checksum(input, checksum_flag_value, output);
-        rewind(input);
+        bfile_seek(b_file, 0);
     }
 
     if (checksum_SHA1) {
         checksum_flag_value = 2;
         print_checksum(input, checksum_flag_value, output);
-        rewind(input);
+        bfile_seek(b_file, 0);
     }
 
     if (checksum_SHA256) {
         checksum_flag_value = 3;
         print_checksum(input, checksum_flag_value, output);
-        rewind(input);
+        bfile_seek(b_file, 0);
     }
 
     if (flag_stringExtract) {
@@ -155,8 +161,8 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    if (input != stdin)  {
-        fclose(input);
+    if (b_file) {
+        bfile_close(b_file);
     }
 
     if (output != stdout) {
