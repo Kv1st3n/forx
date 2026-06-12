@@ -21,6 +21,9 @@ private:
 
 public:
 
+    SignatureDB(const std::string &path);
+    ~SignatureDB();
+
     void load_file();
 
     void identify_file();

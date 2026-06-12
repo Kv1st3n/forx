@@ -1,7 +1,15 @@
 #include <vector>
 #include <string>
+#include <cstdio>
 #include "sigdb.h"
 
+SignatureDB::SignatureDB(const std::string &path) {
+
+}
+
+SignatureDB::~SignatureDB() {
+
+}
 
 void load_file();
 
