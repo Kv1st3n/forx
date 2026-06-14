@@ -1,16 +1,18 @@
 # HexDumper
-HexDumper (name will change) is a simple CLI-based tool for hexadecimal dumping and file identification written in C/C++17. 
+**forx** is a CLI-based binary analysis tool written in C/C++17. 
+Hex dump, file identification, checksum verification, and directory scanning — built for forensics and systems work.
 Developed on macOS using clang (clang-1700.4.4.1).
 
 >[!IMPORTANT]
 > This project is built and tested on macOS using clang via Xcode Command Line Tools.  
 > It may work on Linux with gcc but is not officially supported.
 
-## Installing
-
-### Prerequisites
+## Prerequisites
 - Xcode Command Line
 - Make
+- OpenSSL (`brew install openssl`)
+
+## Installing
 
 ```zsh
 git clone https://github.com/Kv1st3n/HexDumper.git
@@ -41,12 +43,6 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | `-M` | MD5 Checksum | Implemented | 
 | `-1` | SHA1 Checksum | Implemented | 
 | `-2` | SHA256 Checksum | Implemented | 
-
-### Todos
-| Task | Description | Notes | Status |
-|------|-------------|-------------|------|
-| Cleanup | Overall cleanup of code | Including proper comments | WIP |
-| GUI | Make a GUI for the tool| Not yet implemented | Not started |
 
 
 ### Examples
