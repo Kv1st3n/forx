@@ -3,12 +3,13 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <ctype.h>
+#include <stddef.h>
 
 #include "hexDumper.h"
 #include "scanner.h"
 #include "checksum.h"
-
 #include "file_handler.h"
+#include "sigdb.h"
 
 int main(int argc, char **argv) {
 
@@ -38,6 +39,8 @@ int main(int argc, char **argv) {
 
     char *outpath = NULL;
     int   opt;
+
+    sigdb_load("signature.txt");
     
     while ((opt = getopt(argc, argv, "hio:M12d:BrCLS")) != -1) {
         switch (opt) {
@@ -111,13 +114,38 @@ int main(int argc, char **argv) {
         output = stdout;
     }
 
+    if (!flag_directoryScan && !flag_identify && !flag_hexDump && !flag_reverseHex && !checksum_MD5 
+        && !checksum_SHA1 && !checksum_SHA256 && !flag_stringExtract) {
+            fprintf(stderr,
+                "usage: hexDumper [-h] [-i] [-B] [-r] [-C] [-L] [-S]\n"
+                "                 [-M] [-1] [-2] [-d dir] [-o outfile] <file>\n");
+
+        if (b_file) {
+            bfile_close(b_file);
+        } 
+
+        if (output != stdout) {
+            fclose(output);
+        }
+        return EXIT_FAILURE;
+    }
+
     if (flag_directoryScan) {
         scan_directory(dir_name, output);
     }
 
     if (flag_identify) {
-        identify_file(input, output);
-        rewind(input); 
+        uint8_t buf[16];
+        size_t  n = fread(buf, 1, 16, input);
+
+        // use sigdb if signatures were loaded, else fall back to scanner.c
+        if (sigdb_count() > 0) {
+            fprintf(output, "Type: %s\n", sigdb_identify(buf, n));
+        } else {
+            rewind(input);
+            identify_file(input, output);
+        }
+        rewind(input);
     }
 
     if (flag_hexDump) {
@@ -150,15 +178,6 @@ int main(int argc, char **argv) {
 
     if (flag_stringExtract) {
         extract_strings(input, output);
-    }
-
-    // maybe update
-    if (!flag_directoryScan && !flag_identify && !flag_hexDump && !flag_reverseHex &&
-    !checksum_MD5 && !checksum_SHA1 && !checksum_SHA256 && !flag_stringExtract) {
-
-        fprintf(stderr,
-            "usage: hexDumper [-h] [-i] [-d dir] [-o outfile] [-r] <file>\n");
-        return EXIT_FAILURE;
     }
 
     if (b_file) {

@@ -11,11 +11,17 @@ CXXFLAGS = -Wall -Wextra -g -std=c++17 \
            -I/opt/homebrew/opt/openssl/include \
            -Isrc \
            -Isrc/report
-LDFLAGS = -L/opt/homebrew/opt/openssl/lib -lssl -lcrypto
-TARGET  = hexDumper
+LDFLAGS  = -L/opt/homebrew/opt/openssl/lib -lssl -lcrypto
+TARGET   = hexDumper
 
-SRCS_C   = main.c src/hexDumper.c src/scanner.c src/checksum.c
-SRCS_CPP = src/report/file_handler.cpp
+SRCS_C   = main.c \
+           src/hexDumper.c \
+           src/scanner.c \
+           src/checksum.c
+
+SRCS_CPP = src/report/file_handler.cpp \
+           src/report/sigdb.cpp
+
 OBJS     = $(SRCS_C:.c=.o) $(SRCS_CPP:.cpp=.o)
 
 ifeq ($(CC),gcc)
@@ -32,4 +38,4 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET) test_cpp src/report/test.o
+	rm -f $(OBJS) $(TARGET)
