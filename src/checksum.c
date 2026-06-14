@@ -41,8 +41,10 @@ void print_checksum(FILE *input, int flagValue, FILE *output) {
     EVP_DigestFinal_ex(mdctx, md_value, &md_len);
     EVP_MD_CTX_free(mdctx);
 
-    for (i = 0; i < md_len; i++)
+    for (i = 0; i < md_len; i++) {
         fprintf(output, "%02x", md_value[i]);
+    }
+    
     fprintf(output, "\n");
     fflush(output);
 } 
