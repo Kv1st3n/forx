@@ -12,7 +12,7 @@ CXXFLAGS = -Wall -Wextra -g -std=c++17 \
            -Isrc \
            -Isrc/report
 LDFLAGS  = -L/opt/homebrew/opt/openssl/lib -lssl -lcrypto
-TARGET   = hexDumper
+TARGET   = forx
 
 SRCS_C   = main.c \
            src/hexDumper.c \
@@ -37,5 +37,11 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+.PHONY: clean run
+
+run: $(TARGET)
+	./$(TARGET)
+
 clean:
 	rm -f $(OBJS) $(TARGET)
+	find . -name "*.o" -delete
