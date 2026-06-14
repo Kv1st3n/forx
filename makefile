@@ -24,9 +24,15 @@ SRCS_CPP = src/report/file_handler.cpp \
 
 OBJS     = $(SRCS_C:.c=.o) $(SRCS_CPP:.cpp=.o)
 
+
 ifeq ($(CC),gcc)
     CFLAGS += -Wjump-misses-init -Wlogical-op
 endif
+
+
+GTK_CFLAGS := $(shell pkg-config --cflags gtk4)
+GTK_LIBS   := $(shell pkg-config --libs gtk4)
+
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
@@ -37,11 +43,20 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+
+# simply used to test the window
+test_gtk: src/ui/window.cpp
+	$(CXX) $(CXXFLAGS) $(GTK_CFLAGS) \
+	    src/ui/window.cpp \
+	    $(GTK_LIBS) \
+	    -o test_gtk
+
+
 .PHONY: clean run
 
 run: $(TARGET)
 	./$(TARGET)
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) test_gtk
 	find . -name "*.o" -delete
