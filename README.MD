@@ -1,6 +1,6 @@
 # HexDumper
 **forx** is a CLI-based binary analysis tool written in C/C++17. 
-Hex dump, file identification, checksum verification, and directory scanning — built for forensics and systems work.
+Hex dump, file identification, checksum verification, and directory scanning. Built for forensics and systems work.
 Developed on macOS using clang (clang-1700.4.4.1).
 
 >[!IMPORTANT]
@@ -15,17 +15,17 @@ Developed on macOS using clang (clang-1700.4.4.1).
 ## Installing
 
 ```zsh
-git clone https://github.com/Kv1st3n/HexDumper.git
-cd hexDumper
+git clone https://github.com/Kv1st3n/forx.git
+cd forx
 make
 ```
 
-## Using Hex Dumper
+## Using forx
 The tool reads binary data from a file and outputs it in a formatted grid.
 
 ```zsh
-./hexDumper [flags] <file>
-./hexDumper [flags]          # reads from stdin if no file is given
+./forx [flags] <file>
+./forx [flags]          # reads from stdin if no file is given
 ```
 
 ### Flags
@@ -49,22 +49,22 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 
 ```zsh
 # Dump a file
-./hexDumper -h test.txt
+./forx -h test.txt
 
 # Read from stdin
-echo "hello" | ./hexDumper -h
+echo "hello" | ./forx -h
 
 # Dump a file and create a new file containing the dump
-./hexDumper -h -o dump.txt test.txt 
+./forx -h -o dump.txt test.txt 
 
 # Revert a dumped hex file to its original ASCII text
-./hexDumper -r -o recovered.txt dump.txt
+./forx -r -o recovered.txt dump.txt
 
 # Use lower case flag
-./hexDumper -h -L -o  dump2.txt test.png 
+./forx -h -L -o  dump2.txt test.png 
 
 # If you want to get byte size for the hexdump
-./hexDumper -h -o dump.txt -B hexDumper.c
+./forx -h -o dump.txt -B hexDumper.c
 
 ```
 
@@ -73,7 +73,7 @@ The output is divided into the memory offset, hex values (capitalized) and print
 
 ```zsh
 # Example command
-./hexDumper -h -o dump.txt hexDumper.c
+./forx -h -o dump.txt hexDumper.c
 
 # Output
 00000000  23 69 6E 63 6C 75 64 65  20 3C 73 74 64 69 6F 2E  |#include <stdio.|
@@ -87,7 +87,7 @@ The output is divided into the memory offset, hex values (capitalized) and print
 #continues...
 
 # Example command with compact (-C)
-./hexDumper -h -C -o dump.txt hexDumper.c
+./forx -h -C -o dump.txt hexDumper.c
 
 # Output
 00000000  23 69 6E 63 6C 75 64 65  20 3C 73 74 64 69 6F 2E 
@@ -104,7 +104,7 @@ The output is divided into the memory offset, hex values (capitalized) and print
 
 
 # Example command with directory scan (-d)
-./hexDumper -d /testdir -o
+./forx -d /testdir -o
 /testdir/test.zip: Type: ZIP
 
 ```
