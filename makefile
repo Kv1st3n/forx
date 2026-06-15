@@ -30,8 +30,8 @@ ifeq ($(CC),gcc)
 endif
 
 
-GTK_CFLAGS := $(shell pkg-config --cflags gtk4)
-GTK_LIBS   := $(shell pkg-config --libs gtk4)
+GTK_CFLAGS  := $(shell pkg-config --cflags gtkmm-4.0)
+GTK_LIBS    := $(shell pkg-config --libs gtkmm-4.0)
 
 
 $(TARGET): $(OBJS)
