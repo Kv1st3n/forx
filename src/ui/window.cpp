@@ -7,7 +7,7 @@ class ForxWindow : public Gtk::ApplicationWindow {
 public:
     ForxWindow() {
         set_title("forx");
-        set_default_size(800, 600);
+        set_default_size(1200, 800);
 
         m_main_box.set_orientation(Gtk::Orientation::VERTICAL);
         m_main_box.set_spacing(10);
@@ -16,7 +16,12 @@ public:
         m_label.set_text("forx — binary analysis tool");
         m_main_box.append(m_label);
 
+        // position the button
         m_button.set_label("Execute");
+        m_button.set_size_request(200, 60);
+        m_button.set_halign(Gtk::Align::CENTER);
+        m_button.set_margin_top(50);
+
         m_button.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_button_clicked));
         m_main_box.append(m_button);
         
