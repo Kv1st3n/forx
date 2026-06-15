@@ -1,28 +1,58 @@
-#include <gtk/gtk.h>
+#include <iostream>
+#include <gtkmm.h>
+#include <gtkmm/button.h>
+#include "CustomButton.h"
 
-static void on_activate(GtkApplication *app, gpointer user_data) {
-    (void)user_data;    // suppress unused parameter warning
-    
-    GtkWidget *window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "forx");
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+class ForxWindow : public Gtk::ApplicationWindow {
+public:
+    ForxWindow() {
+        set_title("forx");
+        set_default_size(800, 600);
 
-    GtkWidget *label = gtk_label_new("forx — binary analysis tool");
-    gtk_window_set_child(GTK_WINDOW(window), label);
+        m_main_box.set_orientation(Gtk::Orientation::VERTICAL);
+        m_main_box.set_spacing(10);
+        m_main_box.set_margin(15);
 
-    gtk_window_present(GTK_WINDOW(window));
-}
+        m_label.set_text("forx — binary analysis tool");
+        m_main_box.append(m_label);
+
+        m_button.set_label("Execute");
+        m_button.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_button_clicked));
+        m_main_box.append(m_button);
+        
+        set_child(m_main_box);
+    }
+
+protected:
+    void on_button_clicked() {
+        std::cout << "Action executed!" << std::endl;
+    }
+
+private:
+    Gtk::Box m_main_box;
+    Gtk::Label m_label;
+    Gtk::Button m_button;
+};
+
+class ForxApp : public Gtk::Application {
+public:
+    static Glib::RefPtr<ForxApp> create() {
+        return Glib::make_refptr_for_instance<ForxApp>(
+            new ForxApp()
+        );
+    }
+
+protected:
+    ForxApp() : Gtk::Application("org.example.forx") {}
+
+    void on_activate() override {
+        auto *window = new ForxWindow();
+        add_window(*window);
+        window->present();
+    }
+};
 
 int main(int argc, char **argv) {
-    GtkApplication *app = gtk_application_new(
-        "com.forx.app",
-        G_APPLICATION_DEFAULT_FLAGS
-    );
-
-    g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
-
-    int status = g_application_run(G_APPLICATION(app), argc, argv);
-    g_object_unref(app);
-
-    return status;
+    auto app = ForxApp::create();
+    return app->run(argc, argv);
 }
