@@ -17,12 +17,7 @@ public:
         m_main_box.append(m_label);
 
         // position the button
-        m_button.set_label("Execute");
-        m_button.set_size_request(200, 60);
-        m_button.set_halign(Gtk::Align::CENTER);
-        m_button.set_margin_top(50);
-
-        m_button.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_button_clicked));
+        setup_custom_buttons();
         m_main_box.append(m_button);
         
         set_child(m_main_box);
@@ -34,6 +29,18 @@ protected:
     }
 
 private:
+
+    void setup_custom_buttons() {
+        m_button.set_label("Execute");
+        m_button.set_size_request(200, 60); 
+        m_button.set_halign(Gtk::Align::CENTER); 
+        m_button.set_margin_top(50); 
+        
+        m_button.signal_clicked().connect(
+            sigc::mem_fun(*this, &ForxWindow::on_button_clicked)
+        );
+    }
+
     Gtk::Box m_main_box;
     Gtk::Label m_label;
     Gtk::Button m_button;
