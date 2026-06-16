@@ -1,6 +1,8 @@
 #include <iostream>
 #include <gtkmm.h>
 #include <gtkmm/button.h>
+#include <gtkmm/cssprovider.h> 
+#include <gdkmm/display.h> 
 #include "CustomButton.h"
 
 class ForxWindow : public Gtk::ApplicationWindow {
@@ -25,7 +27,7 @@ protected:
     void on_open_clicked() { 
         std::cout << "Open File clicked" << std::endl; 
     }
-    
+
     void on_run_clicked()  { 
         std::cout << "Run clicked" << std::endl; 
     }
@@ -89,6 +91,15 @@ protected:
     ForxApp() : Gtk::Application("org.example.forx") {}
 
     void on_activate() override {
+
+        auto provider = Gtk::CssProvider::create();
+        provider->load_from_path("style.css");
+        Gtk::StyleContext::add_provider_for_display(
+            Gdk::Display::get_default(),
+            provider,
+            GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
+        );
+
         auto *window = new ForxWindow();
         add_window(*window);
         window->present();

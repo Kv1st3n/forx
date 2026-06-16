@@ -1,0 +1,57 @@
+/* shared base for all buttons */
+.forx-button {
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 13px;
+    border: 1px solid transparent;
+    transition: all 200ms ease;
+}
+
+/* open file button */
+.forx-button-open {
+    background-color: #3C3C3E;
+    color: #E5E5EA;
+    border-color: #545456;
+}
+
+.forx-button-open:hover {
+    background-color: #48484A;
+    border-color: #636366;
+}
+
+.forx-button-open:active {
+    background-color: #2C2C2E;
+}
+
+/* run button */
+.forx-button-run {
+    background-color: #2558A3;
+    color: #FFFFFF;
+    border-color: #1B3A6B;
+}
+
+.forx-button-run:hover {
+    background-color: #2E6ABF;
+    border-color: #2558A3;
+}
+
+.forx-button-run:active {
+    background-color: #1B3A6B;
+}
+
+/* save button */
+.forx-button-save {
+    background-color: #1E7145;
+    color: #FFFFFF;
+    border-color: #155232;
+}
+
+.forx-button-save:hover {
+    background-color: #248A53;
+    border-color: #1E7145;
+}
+
+.forx-button-save:active {
+    background-color: #155232;
+}
