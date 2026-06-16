@@ -11,6 +11,7 @@ Developed on macOS using clang (clang-1700.4.4.1).
 - Xcode Command Line
 - Make
 - OpenSSL (`brew install openssl`)
+- Gtk4 & Gtkmm4 ('brew install gtk4 / gtkmm4)
 
 ## Installing
 
