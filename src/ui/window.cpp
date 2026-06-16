@@ -22,8 +22,16 @@ public:
     }
 
 protected:
-    void on_button_clicked() {
-        std::cout << "Action executed!" << std::endl;
+    void on_open_clicked() { 
+        std::cout << "Open File clicked" << std::endl; 
+    }
+    
+    void on_run_clicked()  { 
+        std::cout << "Run clicked" << std::endl; 
+    }
+
+    void on_save_clicked() { 
+        std::cout << "Save clicked" << std::endl; 
     }
 
 private:
@@ -41,13 +49,11 @@ private:
 
         m_header_bar.set_title_widget(*title_box);
 
-        m_button.set_label("Execute");
-        m_button.set_size_request(100, 34);
-        m_button.signal_clicked().connect(
-            sigc::mem_fun(*this, &ForxWindow::on_button_clicked)
-        );
+        setup_custom_buttons();
 
-        m_header_bar.pack_start(m_button);
+        m_header_bar.pack_start(m_button_open);
+        m_header_bar.pack_start(m_button_run);
+        m_header_bar.pack_start(m_button_save);
 
         m_header_bar.set_show_title_buttons(true);
 
@@ -56,20 +62,19 @@ private:
     }
 
     void setup_custom_buttons() {
-        m_button.set_label("Execute");
-        m_button.set_size_request(200, 60); 
-        m_button.set_halign(Gtk::Align::CENTER); 
-        m_button.set_margin_top(50); 
-        
-        m_button.signal_clicked().connect(
-            sigc::mem_fun(*this, &ForxWindow::on_button_clicked)
-        );
+        m_button_open.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_open_clicked));
+        m_button_run.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_run_clicked));
+        m_button_save.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
     }
 
     Gtk::Box m_main_box;
     Gtk::Label m_label;
     Gtk::Button m_button;
     Gtk::HeaderBar m_header_bar;
+
+    Custom_Button m_button_open{"Open File"};
+    Custom_Button m_button_run{"Run"};
+    Custom_Button m_button_save{"Save"};
 };
 
 class ForxApp : public Gtk::Application {

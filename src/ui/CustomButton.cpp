@@ -2,24 +2,13 @@
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <iostream>
+#include <string>
 
-Custom_Button::Custom_Button() {
-    auto label = Gtk::make_managed<Gtk::Label>("Execute");
-    label->set_expand(true);
-
-    auto hbox = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::HORIZONTAL, 5);
-    hbox->append(*label);
-
-    m_button.set_child(*hbox);
-
-    m_button.signal_clicked().connect(sigc::mem_fun(*this, &Custom_Button::on_button_clicked));
-
-    m_button.set_margin(10);
-    set_child(m_button);
+Custom_Button::Custom_Button(const std::string& label) : Gtk::Button(label) {
+    set_margin_start(6);
+    set_margin_end(6);
+    set_margin_top(6);
+    set_margin_bottom(6);
+    set_hexpand(false);
 }
 
-Custom_Button::Custom_Button() {}
-
-void Custom_Button::on_button_clicked() {
-    std::cout << "Action executed!" << std::endl;
-}
