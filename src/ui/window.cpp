@@ -22,7 +22,7 @@ public:
         m_main_box.set_orientation(Gtk::Orientation::VERTICAL);
         m_main_box.set_margin(15);
 
-        m_label.set_text("Welcome Forx");
+        m_label.set_text("Welcome to Forx");
         m_main_box.append(m_label);
         
         
@@ -37,6 +37,10 @@ protected:
         std::cout << "Routing open action to CustomWindow context..." << std::endl; 
     
         m_file_picker_manager.show_picker(*this);
+    }
+
+    void on_mode_clicked() {
+        m_mode_selector.show_mode_menu(m_button_mode);
     }
 
     void on_run_clicked()  { 
@@ -78,7 +82,7 @@ private:
 
     void setup_custom_buttons() {
         m_button_open.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_open_clicked));
-        m_button_mode.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
+        m_button_mode.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_mode_clicked));
         m_button_run.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_run_clicked));
         m_button_save.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
         m_button_settings.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
@@ -103,6 +107,7 @@ private:
     };
 
     CustomWindow m_file_picker_manager;
+    CustomWindow m_mode_selector;
 };
 
 class ForxApp : public Gtk::Application {
