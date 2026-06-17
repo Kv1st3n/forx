@@ -1,15 +1,21 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include <gtkmm.h>
 #include <gtkmm/button.h>
 #include <gtkmm/cssprovider.h> 
 #include <gdkmm/display.h> 
 #include "CustomButton.h"
+#include "CustomWindow.h"
 
 class ForxWindow : public Gtk::ApplicationWindow {
 public:
     ForxWindow() {
         set_title("forx");
         set_default_size(1200, 800);
+
+        // dark theme
+        //Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
 
         setup_custom_header();
         
@@ -23,9 +29,14 @@ public:
         set_child(m_main_box);
     }
 
+    virtual ~ForxWindow() {}
+
+    // setup button actions
 protected:
     void on_open_clicked() { 
-        std::cout << "Open File clicked" << std::endl; 
+        std::cout << "Routing open action to CustomWindow context..." << std::endl; 
+    
+        m_file_picker_manager.show_picker(*this);
     }
 
     void on_run_clicked()  { 
@@ -38,6 +49,7 @@ protected:
 
 private:
 
+    // sets up header
     void setup_custom_header() {
         auto *title_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
         auto *title_lable = Gtk::make_managed<Gtk::Label>("<b>forx</b>");
@@ -53,9 +65,10 @@ private:
 
         setup_custom_buttons();
 
-        m_header_bar.pack_start(m_button_open);
-        m_header_bar.pack_start(m_button_run);
-        m_header_bar.pack_start(m_button_save);
+        // iterates and packs each button
+        for (auto &btn : buttons) {
+            m_header_bar.pack_start(*btn);
+        }
 
         m_header_bar.set_show_title_buttons(true);
 
@@ -65,8 +78,12 @@ private:
 
     void setup_custom_buttons() {
         m_button_open.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_open_clicked));
+        m_button_mode.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
         m_button_run.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_run_clicked));
         m_button_save.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
+        m_button_settings.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
+        m_button_about.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
+
     }
 
     Gtk::Box m_main_box;
@@ -75,8 +92,17 @@ private:
     Gtk::HeaderBar m_header_bar;
 
     Custom_Button m_button_open{"Open File"};
+    Custom_Button m_button_mode{"Mode"};
     Custom_Button m_button_run{"Run"};
     Custom_Button m_button_save{"Save"};
+    Custom_Button m_button_settings{"Settings"};
+    Custom_Button m_button_about{"About"};
+
+    std::vector<Custom_Button*> buttons = {&m_button_open, &m_button_mode, &m_button_run, 
+        &m_button_save, &m_button_settings, &m_button_about
+    };
+
+    CustomWindow m_file_picker_manager;
 };
 
 class ForxApp : public Gtk::Application {

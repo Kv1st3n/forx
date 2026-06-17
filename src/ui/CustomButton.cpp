@@ -5,7 +5,11 @@
 #include <string>
 
 Custom_Button::Custom_Button(const std::string& label) : Gtk::Button(label) {
-    add_css_class("forx-button");
+    add_css_class("forx-button"); // 'flat' if i dont want the button shape
+
+    //set_halign(Gtk::Align::CENTER);
+    //set_size_request(-1, -1);
+
     set_margin_start(6);
     set_margin_end(6);
     set_margin_top(6);

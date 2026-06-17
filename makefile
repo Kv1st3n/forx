@@ -45,10 +45,11 @@ $(TARGET): $(OBJS)
 
 
 # simply used to test the window
-test_gtk: src/ui/window.cpp src/ui/CustomButton.cpp
+test_gtk: src/ui/window.cpp src/ui/CustomButton.cpp src/ui/CustomWindow.cpp
 	$(CXX) $(CXXFLAGS) $(GTK_CFLAGS) \
 	    src/ui/window.cpp \
 	    src/ui/CustomButton.cpp \
+        src/ui/CustomWindow.cpp \
 	    $(GTK_LIBS) \
 	    -o test_gtk
 
