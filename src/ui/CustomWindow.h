@@ -11,6 +11,7 @@ public:
 
     void show_picker(Gtk::Window& parent_window);
     void show_mode_menu(Gtk::Button& parent_button);
+    void show_about(Gtk::Window& parent_window);
 
 protected:
     void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog);

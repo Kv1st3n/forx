@@ -24,9 +24,16 @@ void CustomWindow::show_mode_menu(Gtk::Button& parent_button) {
     if (!m_mode_popover.get_parent()) {
         auto mode_menu = Gio::Menu::create();
 
+        mode_menu ->append("Hex dump");
+        mode_menu ->append("Reverse Mode");
+        mode_menu ->append("File identifier");
+        mode_menu ->append("Directory Scanner");
+        mode_menu ->append("String extractor");
         mode_menu ->append("MD5");
         mode_menu ->append("SHA1");
         mode_menu ->append("SHA256");
+
+        // compact mode, lowercase and output will be additional settings / options
 
         m_mode_popover.set_menu_model(mode_menu);
 
@@ -36,6 +43,10 @@ void CustomWindow::show_mode_menu(Gtk::Button& parent_button) {
     m_mode_popover.popup();
 
 }
+
+void CustomWindow::show_about(Gtk::Window& parent_window) {
+
+} 
 
 void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog) {
     try {
