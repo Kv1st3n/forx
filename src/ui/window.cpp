@@ -51,6 +51,10 @@ protected:
         std::cout << "Save clicked" << std::endl; 
     }
 
+    void on_about_clicked() {
+        m_about_mode.show_about(*this);
+    }
+
 private:
 
     // sets up header
@@ -86,7 +90,7 @@ private:
         m_button_run.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_run_clicked));
         m_button_save.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
         m_button_settings.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
-        m_button_about.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
+        m_button_about.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_about_clicked));
 
     }
 
@@ -108,6 +112,7 @@ private:
 
     CustomWindow m_file_picker_manager;
     CustomWindow m_mode_selector;
+    CustomWindow m_about_mode;
 };
 
 class ForxApp : public Gtk::Application {

@@ -19,9 +19,14 @@ protected:
 
 private:
     Gtk::PopoverMenu m_mode_popover;
+    Gtk::PopoverMenu m_about_popover;
+    Gtk::TextView m_about_text_view;
+    Glib::RefPtr<Gtk::TextTagTable> m_ref_text_tag_table;
+    Glib::RefPtr<Gtk::TextBuffer> m_ref_text_buffer;
+
+    void fill_text_tag_table();
+    void fill_buffer();
 };
-
-
 
 
 #endif
