@@ -1,4 +1,5 @@
 #include "CustomWindow.h"
+#include "CustomButton.h"
 #include <iostream>
 
 CustomWindow::CustomWindow() {}
@@ -24,14 +25,12 @@ void CustomWindow::show_mode_menu(Gtk::Button& parent_button) {
     if (!m_mode_popover.get_parent()) {
         auto mode_menu = Gio::Menu::create();
 
-        mode_menu ->append("Hex dump");
-        mode_menu ->append("Reverse Mode");
-        mode_menu ->append("File identifier");
-        mode_menu ->append("Directory Scanner");
-        mode_menu ->append("String extractor");
-        mode_menu ->append("MD5");
-        mode_menu ->append("SHA1");
-        mode_menu ->append("SHA256");
+        std::vector<std::string> modes = {"Hex dump", "Reverse Mode", "File identifier", "Directory Scanner"
+        "String extractor", "MD5", "SHA1", "SHA256", "SHA512"};
+
+        for (const auto& mode : modes) {
+            mode_menu ->append(mode);
+        }
 
         // compact mode, lowercase and output will be additional settings / options
 
@@ -54,21 +53,33 @@ void CustomWindow::show_about(Gtk::Window& parent_window) {
     about_window->set_transient_for(parent_window);
     about_window->set_modal(true);
 
+    // always create a 'master'-box, which then contains all the customizable features
+    // due to gtk and its architecture, it is the only way
     auto* master_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
     master_box->set_spacing(15); 
     master_box->set_margin(20);
 
+    // specifies the current version of the tool
     auto* app_version = Gtk::make_managed<Gtk::Label>("Version 1.0.0 (Stable)");
     app_version->set_halign(Gtk::Align::START);
     app_version->add_css_class("about-subtitle");
     master_box->append(*app_version);
 
+    // calls the customized functions for the text in about section
     fill_text_tag_table();
     fill_buffer();
 
     m_about_text_view.set_buffer(m_ref_text_buffer);
     m_about_text_view.set_editable(false);
     m_about_text_view.set_cursor_visible(false);
+
+    auto* visual_divider = Gtk::make_managed<Gtk::Separator>(Gtk::Orientation::HORIZONTAL);
+    master_box->append(*visual_divider);
+
+    // two buttons, left and right, left is about the tool, right is about us / license and stuff 
+    Gtk::Grid* m_grid = create_button_grid_for_about_section();   
+
+    master_box->append(*m_grid);
 
     auto* scrolled_window = Gtk::make_managed<Gtk::ScrolledWindow>();
     scrolled_window->set_child(m_about_text_view);
@@ -80,6 +91,42 @@ void CustomWindow::show_about(Gtk::Window& parent_window) {
     about_window->set_child(*master_box);
     about_window->present();
 } 
+
+// creates a grid of x-amount of buttons for about
+Gtk::Grid* CustomWindow::create_button_grid_for_about_section() {
+    m_button_about_tool.signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &CustomWindow::fill_buffer_about), 1));
+    m_button_about_us.signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &CustomWindow::fill_buffer_about), 2));
+
+    m_grid.attach(m_button_about_tool, 0, 0);
+    m_grid.attach(m_button_about_us, 1, 0);
+
+    return &m_grid;
+}
+
+void CustomWindow::fill_buffer_about(const int& choice) {
+    if (!m_ref_text_buffer) {
+        m_ref_text_buffer = Gtk::TextBuffer::create(m_ref_text_tag_table);
+        m_about_text_view.set_buffer(m_ref_text_buffer);
+    }
+    
+    m_ref_text_buffer->set_text(""); 
+    auto iterable = m_ref_text_buffer->begin();
+
+    if (choice == 1) {
+        m_ref_text_buffer->insert_with_tag(iterable, 
+            "Forx is a binary analysis tool used for forensic purposes. It just works.\n\n", 
+            "plain-text"); 
+    } else if (choice == 2) {
+        m_ref_text_buffer->insert_with_tag(iterable, 
+            "We are the greatest. It just works.\n\n", 
+            "plain-text");
+    } else {
+        m_ref_text_buffer->insert_with_tag(iterable, 
+            "Error. Error\n\n", 
+            "plain-text");
+    }
+}
+
 
 void CustomWindow::fill_text_tag_table() {
     m_ref_text_tag_table = Gtk::TextTagTable::create();
@@ -103,9 +150,15 @@ void CustomWindow::fill_buffer() {
 
     auto iterable = m_ref_text_buffer->begin();
 
+
+    // make a dict or something, then iterate to add all in m_ref_text_buffer
     iterable = m_ref_text_buffer->insert_with_tag(iterable, "Forx is a binary analysis tool used for forensic purposes."
     " It just works.\n\n",
     " Test");
+}
+
+void CustomWindow::show_save(Gtk::Window& parent_window) {
+
 }
 
 
@@ -124,4 +177,8 @@ void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
         std::cout << "CustomWindow: Unexpected exception. " << err.what() << std::endl;
     }
 }
+
+// settings, light and dark mode
+
+// maybe a function (for each) that does all of the set, append, etc
 
