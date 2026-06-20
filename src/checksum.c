@@ -26,6 +26,9 @@ void print_checksum(FILE *input, int flagValue, FILE *output) {
             md = EVP_sha256();
             fprintf(output, "SHA256: ");
             break;
+        case 4:
+            md = EVP_sha512();
+            fprintf(output, "SHA512: ");
         default:
             fprintf(stderr, "Unknown digest\n");
             return;

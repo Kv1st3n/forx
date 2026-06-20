@@ -26,13 +26,14 @@ int main(int argc, char **argv) {
     int   flag_stringExtract = 0;
 
     int   checksum_flag_value = 0;
-    // m
+    // m | checksum_flag_value = 1
     int   checksum_MD5 = 0;
-    // 1
+    // 1 | checksum_flag_value = 2
     int   checksum_SHA1 = 0;
-    // 2
+    // 2 | checksum_flag_value = 3
     int   checksum_SHA256 = 0;
-
+    // 3 | checksum_flag_value = 4
+    int   checksum_SHA512 = 0;
 
     const char *dir_name;
 
@@ -82,6 +83,8 @@ int main(int argc, char **argv) {
             case '2':
                 checksum_SHA256 = 1;
                 break;
+            case '3':
+                checksum_SHA512 = 1;
             default:
                 fprintf(stderr, "usage: hexDumper [-h] [-o outfile] <file>\n");
                 return EXIT_FAILURE;
@@ -172,6 +175,12 @@ int main(int argc, char **argv) {
 
     if (checksum_SHA256) {
         checksum_flag_value = 3;
+        print_checksum(input, checksum_flag_value, output);
+        bfile_seek(b_file, 0);
+    }
+
+    if (checksum_SHA512) {
+        checksum_flag_value = 4;
         print_checksum(input, checksum_flag_value, output);
         bfile_seek(b_file, 0);
     }
