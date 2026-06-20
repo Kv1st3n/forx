@@ -109,9 +109,11 @@ void CustomWindow::fill_buffer_about(const int& choice) {
         m_about_text_view.set_buffer(m_ref_text_buffer);
     }
     
+    // clear the current text
     m_ref_text_buffer->set_text(""); 
     auto iterable = m_ref_text_buffer->begin();
 
+    // depending on choice, display the appropiate text
     if (choice == 1) {
         m_ref_text_buffer->insert_with_tag(iterable, 
             "Forx is a binary analysis tool used for forensic purposes. It just works.\n\n", 
