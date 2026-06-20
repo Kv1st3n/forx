@@ -115,16 +115,77 @@ void CustomWindow::fill_buffer_about(const int& choice) {
 
     // depending on choice, display the appropiate text
     if (choice == 1) {
-        m_ref_text_buffer->insert_with_tag(iterable, 
-            "Forx is a binary analysis tool used for forensic purposes. It just works.\n\n", 
-            "plain-text"); 
-    } else if (choice == 2) {
-        m_ref_text_buffer->insert_with_tag(iterable, 
-            "We are the greatest. It just works.\n\n", 
+        // ── overview ─────────────────────────────────────────
+        iterable  = m_ref_text_buffer->insert_with_tag(iterable ,
+            "forx — Binary Analysis Tool\n"
+            "===========================\n\n"
+            "forx is a forensics-focused workbench for binary visualisation, "
+            "file auditing, and system data analysis. The graphical interface "
+            "mirrors the CLI version, exposing every feature through a clean "
+            "desktop workspace.\n\n",
             "plain-text");
+
+        iterable  = m_ref_text_buffer->insert_with_tag(iterable ,
+            "Features\n"
+            "--------\n",
+            "plain-text");
+
+        // feature list — one entry per insert for clarity
+        const std::vector<std::string> features = {
+            "  Hex Viewer       Raw memory offsets, hex values, and ASCII column\n",
+            "  Mode Selector    Switch between standard, compact, and lowercase output\n",
+            "  File Identifier  Magic byte detection against a runtime signature database\n",
+            "  Directory Scan   Recursive file type cataloguing across a directory tree\n",
+            "  Checksum Engine  MD5, SHA1, and SHA256 integrity verification\n",
+            "  String Extractor Isolates printable ASCII sequences from binary files\n",
+        };
+
+        for (const auto &line : features)
+            iterable  = m_ref_text_buffer->insert_with_tag(iterable , line, "plain-text");
+
+        iterable  = m_ref_text_buffer->insert_with_tag(iterable ,
+            "\nPlatform\n"
+            "--------\n"
+            "  macOS — compiled with Apple Clang via Xcode Command Line Tools\n"
+            "  GTK4 and gtkmm4 for the graphical layer\n",
+            "plain-text");
+
+    } else if (choice == 2) {
+        // ── build info ───────────────────────────────────────
+        iterable  = m_ref_text_buffer->insert_with_tag(iterable ,
+            "Build Information\n"
+            "=================\n\n"
+            "  Version   :  forx 0.1.0\n"
+            "  Language  :  C / C++17\n"
+            "  Compiler  :  Apple Clang (clang-1700.4.4.1)\n"
+            "  UI Layer  :  gtkmm4 — C++ bindings for GTK4\n\n",
+            "plain-text");
+
+        iterable  = m_ref_text_buffer->insert_with_tag(iterable ,
+            "Dependencies\n"
+            "------------\n\n",
+            "plain-text");
+
+        iterable  = m_ref_text_buffer->insert_with_tag(iterable ,
+            "  # install dependencies\n"
+            "  brew install openssl gtk4 gtkmm4\n\n"
+            "  # build\n"
+            "  make clean && make\n\n"
+            "  # run CLI\n"
+            "  ./forx -h <file>\n\n"
+            "  # run GUI\n"
+            "  ./forx --gui\n",
+            "script");
+
+        iterable  = m_ref_text_buffer->insert_with_tag(iterable ,
+            "\nSource\n"
+            "------\n"
+            "  https://github.com/Kv1st3n/forx\n",
+            "plain-text");
+
     } else {
-        m_ref_text_buffer->insert_with_tag(iterable, 
-            "Error. Error\n\n", 
+        m_ref_text_buffer->insert_with_tag(iterable ,
+            "Error: unknown section identifier.\n",
             "plain-text");
     }
 }
@@ -141,7 +202,10 @@ void CustomWindow::fill_text_tag_table() {
     text_tag->property_wrap_mode() = Gtk::WrapMode::NONE;
     text_tag->property_indent() = 20;
     text_tag->property_family() = "Monospace";
-    text_tag->property_background() = "rgb(92%, 92%, 92%)";
+    text_tag->property_background() = "#EFEFEF";
+    text_tag->property_foreground()  = "#1A1A2E";
+    text_tag->property_pixels_above_lines() = 4;
+    text_tag->property_pixels_below_lines() = 4;
     m_ref_text_tag_table->add(text_tag);
 
 }
@@ -152,11 +216,15 @@ void CustomWindow::fill_buffer() {
 
     auto iterable = m_ref_text_buffer->begin();
 
+    const std::vector<std::pair<std::string, std::string>> sections = {
+        { "forx — Binary Analysis Tool\n\n",              "plain-text" },
+        { "A forensics workbench for binary inspection, ",  "plain-text" },
+        { "file identification, and system data analysis.\n","plain-text" },
+    };
 
-    // make a dict or something, then iterate to add all in m_ref_text_buffer
-    iterable = m_ref_text_buffer->insert_with_tag(iterable, "Forx is a binary analysis tool used for forensic purposes."
-    " It just works.\n\n",
-    " Test");
+
+    for (const auto &[text, tag] : sections)
+        iterable = m_ref_text_buffer->insert_with_tag(iterable, text, tag);
 }
 
 void CustomWindow::show_save(Gtk::Window& parent_window) {
@@ -183,4 +251,3 @@ void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
 // settings, light and dark mode
 
 // maybe a function (for each) that does all of the set, append, etc
-

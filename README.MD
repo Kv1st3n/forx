@@ -1,4 +1,4 @@
-# HexDumper
+# Forx
 **forx** is a CLI-based binary analysis tool written in C/C++17. 
 Hex dump, file identification, checksum verification, and directory scanning. Built for forensics and systems work.
 Developed on macOS using clang (clang-1700.4.4.1).
