@@ -23,6 +23,7 @@ void CustomWindow::show_mode_menu(Gtk::Button& parent_button) {
     std::cout << "CustomWindow class: Launching mode menu" << std::endl;
 
     if (!m_mode_popover.get_parent()) {
+        auto master_menu = Gio::Menu::create();
         auto mode_menu = Gio::Menu::create();
 
         std::vector<std::string> modes = {"Hex dump", "Reverse Mode", "File identifier", "Directory Scanner"
@@ -32,10 +33,20 @@ void CustomWindow::show_mode_menu(Gtk::Button& parent_button) {
             mode_menu ->append(mode);
         }
 
-        // compact mode, lowercase and output will be additional settings / options
+        auto sub_menu = Gio::Menu::create();
 
-        m_mode_popover.set_menu_model(mode_menu);
+        std::vector<std::string> sub_modes = {
+            "Compact", "Lowercase", "Output"
+        };
 
+        for (const auto& sub_mode : sub_modes) {
+            sub_menu ->append(sub_mode);
+        }
+
+        master_menu ->append_section(mode_menu);
+        master_menu ->append_section(sub_menu);
+
+        m_mode_popover.set_menu_model(master_menu);
         m_mode_popover.set_parent(parent_button);
     }
 
@@ -221,7 +232,6 @@ void CustomWindow::fill_buffer() {
         { "A forensics workbench for binary inspection, ",  "plain-text" },
         { "file identification, and system data analysis.\n","plain-text" },
     };
-
 
     for (const auto &[text, tag] : sections)
         iterable = m_ref_text_buffer->insert_with_tag(iterable, text, tag);
