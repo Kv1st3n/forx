@@ -49,6 +49,7 @@ protected:
 
     void on_save_clicked() { 
         std::cout << "Save clicked" << std::endl; 
+        m_save_mode.show_save(*this);
     }
 
     void on_about_clicked() {
@@ -113,6 +114,7 @@ private:
     CustomWindow m_file_picker_manager;
     CustomWindow m_mode_selector;
     CustomWindow m_about_mode;
+    CustomWindow m_save_mode;
 };
 
 class ForxApp : public Gtk::Application {

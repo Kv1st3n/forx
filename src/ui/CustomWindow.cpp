@@ -238,7 +238,21 @@ void CustomWindow::fill_buffer() {
 }
 
 void CustomWindow::show_save(Gtk::Window& parent_window) {
+    auto* save_window = Gtk::make_managed<Gtk::Window>();
+    save_window->set_title("Save");
+    save_window->set_default_size(600, 400);
+    save_window->set_resizable(false);
+    save_window->set_transient_for(parent_window);
+    save_window->set_modal(true);
 
+    auto* master_window = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
+    
+
+    // todo
+    // call save to pdf and stuff, but fix it later
+
+    save_window->set_child(*master_window);
+    save_window->present();
 }
 
 
