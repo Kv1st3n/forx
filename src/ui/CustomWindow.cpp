@@ -245,14 +245,58 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
     save_window->set_transient_for(parent_window);
     save_window->set_modal(true);
 
-    auto* master_window = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
-    
+    auto* master_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
+    master_box->set_margin(20);
+    master_box->set_spacing(15);
+
+    auto* save_grid = Gtk::make_managed<Gtk::Grid>();
+    save_grid->set_row_spacing(10);
+    save_grid->set_column_spacing(10);
+    master_box->append(*save_grid);
+
+    auto* type_label = Gtk::make_managed<Gtk::Label>("Select Export Format:");
+    type_label->set_halign(Gtk::Align::START);
+
+    auto* type_button = Gtk::make_managed<Gtk::Button>("Choose Type...");
+    type_button->set_halign(Gtk::Align::START);
+
+    save_grid->attach(*type_label, 0, 0, 1, 1);
+    save_grid->attach(*type_button, 1, 0, 1, 1);
+
+    type_button->signal_clicked().connect([this, type_button]() {
+        show_file_types(*type_button);
+    });
 
     // todo
     // call save to pdf and stuff, but fix it later
 
-    save_window->set_child(*master_window);
+    save_window->set_child(*master_box);
     save_window->present();
+}
+
+void CustomWindow::show_file_types(Gtk::Button& parent_button) {
+
+    if (!m_file_type_popover.get_parent()) {
+        const std::vector<std::string> file_types = {
+        "PDF", "PNG", "JPG", "CSV"
+        };
+
+        auto file_type_menu = Gio::Menu::create();
+
+        for (const auto& file_type : file_types) {
+            std::string format_id = file_type;
+            std::transform(format_id.begin(), format_id.end(), format_id.begin(), ::tolower);
+            
+            file_type_menu->append(file_type, "win.save_as_format::" + format_id);
+        }
+
+        m_file_type_popover.set_menu_model(file_type_menu);
+    }
+
+    m_file_type_popover.unparent();
+    m_file_type_popover.set_parent(parent_button);
+    m_file_type_popover.popup();
+
 }
 
 void CustomWindow::show_settings(Gtk::Window& parent_window) {
@@ -288,3 +332,6 @@ void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
 // settings, light and dark mode
 
 // maybe a function (for each) that does all of the set, append, etc
+
+// maybe make a central function, that returns window, and in the function it does all the necessary setups like title, 
+// resizable, etc
