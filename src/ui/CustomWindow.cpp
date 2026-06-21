@@ -255,6 +255,19 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
     save_window->present();
 }
 
+void CustomWindow::show_settings(Gtk::Window& parent_window) {
+    auto* settings_window = Gtk::make_managed<Gtk::Window>();
+    settings_window->set_title("Settings");
+    settings_window->set_default_size(900, 700);
+    settings_window->set_resizable(true);
+    settings_window->set_transient_for(parent_window);
+    settings_window->set_modal(true);
+
+    auto* master_window = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
+
+    settings_window->set_child(*master_window);
+    settings_window->present();
+}
 
 void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog) {
     try {

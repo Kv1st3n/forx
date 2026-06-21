@@ -56,6 +56,11 @@ protected:
         m_about_mode.show_about(*this);
     }
 
+    void on_settings_clicked() {
+        std::cout << "Settings clocked" << std::endl;
+        m_settings_mode.show_settings(*this);
+    }
+
 private:
 
     // sets up header
@@ -90,7 +95,7 @@ private:
         m_button_mode.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_mode_clicked));
         m_button_run.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_run_clicked));
         m_button_save.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
-        m_button_settings.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_save_clicked));
+        m_button_settings.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_settings_clicked));
         m_button_about.signal_clicked().connect(sigc::mem_fun(*this, &ForxWindow::on_about_clicked));
 
     }
@@ -115,6 +120,7 @@ private:
     CustomWindow m_mode_selector;
     CustomWindow m_about_mode;
     CustomWindow m_save_mode;
+    CustomWindow m_settings_mode;
 };
 
 class ForxApp : public Gtk::Application {
