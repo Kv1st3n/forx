@@ -287,11 +287,64 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
         show_file_types(*type_button);
     });
 
+    // row 2, file path dialog
+    auto* path_label = Gtk::make_managed<Gtk::Label>("Destination Folder:");
+    path_label->set_halign(Gtk::Align::START);
+
+    auto* chosen_path_label = Gtk::make_managed<Gtk::Label>("No folder selected...");
+    chosen_path_label->set_halign(Gtk::Align::START);
+    chosen_path_label->set_hexpand(true);
+
+    auto* browse_button = Gtk::make_managed<Gtk::Button>("Browse...");
+    browse_button->set_halign(Gtk::Align::END);
+
+    save_grid->attach(*path_label,         0, 2, 1, 1);
+    save_grid->attach(*chosen_path_label,  1, 2, 1, 1);
+    save_grid->attach(*browse_button,      2, 2, 1, 1);
+
+    browse_button->signal_clicked().connect([this, save_window, chosen_path_label]() {
+        auto folder_dialog = Gtk::FileDialog::create();
+        folder_dialog->set_title("Select Destination Folder");
+
+        folder_dialog->select_folder(*save_window, [this, folder_dialog, chosen_path_label](const Glib::RefPtr<Gio::AsyncResult>& result) {
+            try {
+                Glib::RefPtr<Gio::File> folder = folder_dialog->select_folder_finish(result);
+                
+                m_selected_folder_path = folder->get_path();
+                
+                chosen_path_label->set_text(m_selected_folder_path);
+            }
+            catch (const Glib::Error& err) {
+                std::cerr << "Folder selection canceled: " << err.what() << std::endl;
+            }
+        });
+    });
+
+
     // row 3, final save button
     m_button_file_save.set_label("Save");
     m_button_file_name.set_halign(Gtk::Align::FILL);
     // final function that saves the file
     save_grid->attach(m_button_file_save, 2, 3, 1, 1);
+
+    m_button_file_save.signal_clicked().connect([this, save_window]() {
+        std::string filename = m_entry.get_text();
+
+        if (m_selected_folder_path.empty()) {
+            std::cerr << "Error: Please choose a destination folder first!" << std::endl;
+            return; 
+        }
+        if (filename.empty()) {
+            std::cerr << "Error: Please enter a filename!" << std::endl;
+            return;
+        }
+
+        std::string final_output_path = m_selected_folder_path + "/" + filename;
+        std::cout << "Executing download/save to: " << final_output_path << std::endl;
+
+        
+        save_window->close();
+    });
 
     save_window->set_child(*master_box);
     save_window->present();

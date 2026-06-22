@@ -40,6 +40,7 @@ private:
 
     Custom_Button m_button_file_name{"Submit"};
     Custom_Button m_button_file_save{"Save"};
+    std::string m_selected_folder_path;
 
     void fill_text_tag_table();
     void fill_buffer();
