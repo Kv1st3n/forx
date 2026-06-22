@@ -240,38 +240,66 @@ void CustomWindow::fill_buffer() {
 void CustomWindow::show_save(Gtk::Window& parent_window) {
     auto* save_window = Gtk::make_managed<Gtk::Window>();
     save_window->set_title("Save");
-    save_window->set_default_size(600, 400);
-    save_window->set_resizable(false);
+    save_window->set_default_size(600, 250);
+    save_window->set_resizable(true);
     save_window->set_transient_for(parent_window);
     save_window->set_modal(true);
 
     auto* master_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
-    master_box->set_margin(20);
+    master_box->set_margin(25); 
     master_box->set_spacing(15);
 
     auto* save_grid = Gtk::make_managed<Gtk::Grid>();
-    save_grid->set_row_spacing(10);
-    save_grid->set_column_spacing(10);
+    save_grid->set_row_spacing(15);   
+    save_grid->set_column_spacing(12);
     master_box->append(*save_grid);
 
+    // row 0, file name entry
+    auto* type_file_name_label = Gtk::make_managed<Gtk::Label>("Save as:");
+    type_file_name_label->set_halign(Gtk::Align::START);
+
+    m_entry.set_placeholder_text("Enter file name (e.g., analysis_dump)...");
+    
+    m_entry.set_hexpand(true); 
+    m_entry.set_halign(Gtk::Align::FILL);
+
+    m_button_file_name.set_label("Submit");
+    m_button_file_name.set_halign(Gtk::Align::END);
+    m_button_file_name.signal_clicked().connect(sigc::mem_fun(*this, &CustomWindow::on_submit));
+
+    save_grid->attach(*type_file_name_label, 0, 0, 1, 1);
+    save_grid->attach(m_entry,               1, 0, 1, 1);
+    save_grid->attach(m_button_file_name,   2, 0, 1, 1);
+
+    // row 1, file format choice
     auto* type_label = Gtk::make_managed<Gtk::Label>("Select Export Format:");
     type_label->set_halign(Gtk::Align::START);
 
     auto* type_button = Gtk::make_managed<Gtk::Button>("Choose Type...");
-    type_button->set_halign(Gtk::Align::START);
+    
+    type_button->set_hexpand(true);
+    type_button->set_halign(Gtk::Align::FILL);
 
-    save_grid->attach(*type_label, 0, 0, 1, 1);
-    save_grid->attach(*type_button, 1, 0, 1, 1);
+    save_grid->attach(*type_label,  0, 1, 1, 1);
+    save_grid->attach(*type_button, 1, 1, 1, 1); 
 
     type_button->signal_clicked().connect([this, type_button]() {
         show_file_types(*type_button);
     });
 
-    // todo
-    // call save to pdf and stuff, but fix it later
+    // row 3, final save button
+    m_button_file_save.set_label("Save");
+    m_button_file_name.set_halign(Gtk::Align::FILL);
+    // final function that saves the file
+    save_grid->attach(m_button_file_save, 2, 3, 1, 1);
 
     save_window->set_child(*master_box);
     save_window->present();
+}
+
+void CustomWindow::on_submit() {
+    Glib::ustring input = m_entry.get_text();
+    std::cout << "User entered: " << input << std::endl;
 }
 
 void CustomWindow::show_file_types(Gtk::Button& parent_button) {
@@ -332,6 +360,5 @@ void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
 // settings, light and dark mode
 
 // maybe a function (for each) that does all of the set, append, etc
-
 // maybe make a central function, that returns window, and in the function it does all the necessary setups like title, 
 // resizable, etc

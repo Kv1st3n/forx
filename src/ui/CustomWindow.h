@@ -16,6 +16,7 @@ public:
     Gtk::Grid* create_button_grid_for_about_section();
     void fill_buffer_about(const int& choice);
     void show_save(Gtk::Window& parent_window);
+    void on_submit();
     void show_file_types(Gtk::Button& parent_button);
     void show_settings(Gtk::Window& parent_window);
 
@@ -29,12 +30,16 @@ private:
     Gtk::PopoverMenu m_about_popover;
     Gtk::TextView m_about_text_view;
     Gtk::Grid m_grid;
+    Gtk::Entry m_entry;
 
     Glib::RefPtr<Gtk::TextTagTable> m_ref_text_tag_table;
     Glib::RefPtr<Gtk::TextBuffer> m_ref_text_buffer;
 
     Custom_Button m_button_about_tool{"About tool"};
     Custom_Button m_button_about_us{"About us"};
+
+    Custom_Button m_button_file_name{"Submit"};
+    Custom_Button m_button_file_save{"Save"};
 
     void fill_text_tag_table();
     void fill_buffer();
