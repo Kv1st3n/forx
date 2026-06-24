@@ -342,8 +342,9 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
         std::string final_output_path = m_selected_folder_path + "/" + filename;
         std::cout << "Executing download/save to: " << final_output_path << std::endl;
 
+        // Call your actual file-writing function here using 'final_output_path'
         
-        save_window->close();
+        save_window->close(); // Close popup when done
     });
 
     save_window->set_child(*master_box);

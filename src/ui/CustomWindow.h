@@ -10,6 +10,8 @@ public:
     CustomWindow();
     ~CustomWindow() = default;
 
+protected:
+    void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog);
     void show_picker(Gtk::Window& parent_window);
     void show_mode_menu(Gtk::Button& parent_button);
     void show_about(Gtk::Window& parent_window);
@@ -19,10 +21,6 @@ public:
     void on_submit();
     void show_file_types(Gtk::Button& parent_button);
     void show_settings(Gtk::Window& parent_window);
-
-protected:
-    void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog);
-
 
 private:
     Gtk::PopoverMenu m_mode_popover;
