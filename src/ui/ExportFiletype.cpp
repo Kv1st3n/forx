@@ -46,6 +46,7 @@ void ExportFiletype::export_as_pdf(const std::string& final_output_path) {
     });
 
     op->signal_draw_page().connect([](const Glib::RefPtr<Gtk::PrintContext>& context, int page_nr) {
+        (void)page_nr;
         auto cr = context->get_cairo_context();
         
         cr->select_font_face("Sans", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);

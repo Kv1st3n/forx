@@ -8,7 +8,9 @@
 #include "CustomButton.h"
 #include "CustomWindow.h"
 
-class ForxWindow : public Gtk::ApplicationWindow {
+// fix stack with widgets
+
+class ForxWindow : public Gtk::ApplicationWindow {  
 public:
     ForxWindow() {
         set_title("forx");
@@ -18,13 +20,14 @@ public:
         //Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
 
         setup_custom_header();
+        setup_main_widget();
         
         m_main_box.set_orientation(Gtk::Orientation::VERTICAL);
         m_main_box.set_margin(15);
 
         m_label.set_text("Welcome to Forx");
         m_main_box.append(m_label);
-        
+        m_main_box.append(*m_master_view_manager);
         
         set_child(m_main_box);
     }
@@ -35,16 +38,51 @@ public:
 protected:
     void on_open_clicked() { 
         std::cout << "Routing open action to CustomWindow context..." << std::endl; 
-    
+        m_master_view_manager->set_visible_child("grid_layout");
         m_file_picker_manager.show_picker(*this);
     }
 
     void on_mode_clicked() {
-        m_mode_selector.show_mode_menu(m_button_mode);
+        m_mode_selector.show_mode_menu(m_button_mode, [this](const std::string &mode) {
+            m_selected_mode = mode;
+
+            if (mode == "hex_dump" || mode == "reverse_mode" || mode == "string_extractor" ||
+                mode == "compact" || mode == "lowercase" || mode == "output") {
+                
+                m_master_view_manager->set_visible_child("hex_layout");
+                
+                auto buf = m_hex_text_view->get_buffer();
+                buf->set_text("Switched to mode: " + mode + "\nClick 'Run' to analyze.");
+            } 
+            else if (mode == "md5" || mode == "sha1" || mode == "sha256" || 
+                    mode == "sha512" || mode == "file_identifier" || mode == "directory_scanner") {
+                
+                m_master_view_manager->set_visible_child("grid_layout");
+                
+                std::cout << "Switched layout to grid view for hashing/scanning mode: " << mode << std::endl;
+            }
+        });
     }
 
-    void on_run_clicked()  { 
+    void on_run_clicked() { 
         std::cout << "Run clicked" << std::endl; 
+
+        if (m_selected_mode == "hex_dump" || m_selected_mode == "reverse_mode" || m_selected_mode == "string_extractor") {
+            m_master_view_manager->set_visible_child("hex_layout");
+            auto buf = m_hex_text_view->get_buffer();
+            buf->set_text("output for: " + m_selected_mode);
+
+        } else if (m_selected_mode == "md5" || m_selected_mode == "sha1" || m_selected_mode == "sha256" || 
+            m_selected_mode == "sha512" || m_selected_mode == "file_identifier" || m_selected_mode == "directory_scanner") {
+
+            m_master_view_manager->set_visible_child("grid_layout");
+
+        } else if (m_selected_mode == "compact" || m_selected_mode == "lowercase" || m_selected_mode == "output") {
+
+            m_master_view_manager->set_visible_child("hex_layout");
+            auto buf = m_hex_text_view->get_buffer();
+            buf->set_text("output for: " + m_selected_mode);
+        }
     }
 
     void on_save_clicked() { 
@@ -100,10 +138,44 @@ private:
 
     }
 
+    void setup_main_widget() {
+        m_master_view_manager = Gtk::make_managed<Gtk::Stack>();
+        m_master_view_manager->set_transition_type(Gtk::StackTransitionType::CROSSFADE);
+        m_master_view_manager->set_vexpand(true); 
+        m_master_view_manager->set_hexpand(true);
+
+        auto *hex_scroller = Gtk::make_managed<Gtk::ScrolledWindow>();
+        m_hex_text_view = Gtk::make_managed<Gtk::TextView>();
+        m_hex_text_view->set_monospace(true);
+        m_hex_text_view->set_editable(false);
+        hex_scroller->set_child(*m_hex_text_view);
+
+        auto ref_buffer = m_hex_text_view->get_buffer();
+        ref_buffer->set_text("test");
+
+        m_scan_results_grid = Gtk::make_managed<Gtk::Grid>();
+        m_scan_results_grid->set_row_spacing(10);
+        m_scan_results_grid->set_column_spacing(15);
+        
+        auto *sample_label = Gtk::make_managed<Gtk::Label>("No file analyzed yet.");
+        m_scan_results_grid->attach(*sample_label, 0, 0, 1, 1);
+
+        m_master_view_manager->add(*hex_scroller, "hex_layout");
+        m_master_view_manager->add(*m_scan_results_grid, "grid_layout");
+
+        m_master_view_manager->set_visible_child("hex_layout");
+
+    }
+
     Gtk::Box m_main_box;
     Gtk::Label m_label;
     Gtk::Button m_button;
     Gtk::HeaderBar m_header_bar;
+
+    Gtk::Stack* m_master_view_manager = nullptr;
+    Gtk::TextView* m_hex_text_view = nullptr;
+    Gtk::Grid* m_scan_results_grid = nullptr;
+    std::string m_selected_mode = "hex_dump";
 
     Custom_Button m_button_open{"Open File"};
     Custom_Button m_button_mode{"Mode"};
@@ -112,7 +184,8 @@ private:
     Custom_Button m_button_settings{"Settings"};
     Custom_Button m_button_about{"About"};
 
-    std::vector<Custom_Button*> buttons = {&m_button_open, &m_button_mode, &m_button_run, 
+    std::vector<Custom_Button*> buttons = {
+        &m_button_open, &m_button_mode, &m_button_run, 
         &m_button_save, &m_button_settings, &m_button_about
     };
 

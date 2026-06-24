@@ -20,39 +20,59 @@ void CustomWindow::show_picker(Gtk::Window& parent_window) {
     dialog->open(parent_window, sigc::bind(sigc::mem_fun(*this, &CustomWindow::on_file_dialog_finish), dialog));
 }
 
-void CustomWindow::show_mode_menu(Gtk::Button& parent_button) {
+void CustomWindow::show_mode_menu(Gtk::Button &parent_button, std::function<void(const std::string &)> on_selected) {
     std::cout << "CustomWindow class: Launching mode menu" << std::endl;
 
     if (!m_mode_popover.get_parent()) {
-        auto master_menu = Gio::Menu::create();
-        auto mode_menu = Gio::Menu::create();
 
-        std::vector<std::string> modes = {"Hex dump", "Reverse Mode", "File identifier", "Directory Scanner"
-        "String extractor", "MD5", "SHA1", "SHA256", "SHA512"};
+        auto *outer_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 0);
 
-        for (const auto& mode : modes) {
-            mode_menu ->append(mode);
-        }
-
-        auto sub_menu = Gio::Menu::create();
-
-        std::vector<std::string> sub_modes = {
-            "Compact", "Lowercase", "Output"
+        const std::vector<std::pair<std::string, std::string>> modes = {
+            { "hex_dump",          "Hex Dump"          },
+            { "reverse_mode",      "Reverse Mode"      },
+            { "file_identifier",   "File Identifier"   },
+            { "directory_scanner", "Directory Scanner" },
+            { "string_extractor",  "String Extractor"  },
+            { "md5",               "MD5"               },
+            { "sha1",              "SHA1"              },
+            { "sha256",            "SHA256"            },
+            { "sha512",            "SHA512"            },
         };
 
-        for (const auto& sub_mode : sub_modes) {
-            sub_menu ->append(sub_mode);
+        for (const auto &[id, label] : modes) {
+            auto *btn = Gtk::make_managed<Gtk::Button>(label);
+            std::string mode_id = id;
+            btn->signal_clicked().connect([this, mode_id, on_selected]() {
+                m_mode_popover.popdown();
+                on_selected(mode_id);
+            });
+            outer_box->append(*btn);
         }
 
-        master_menu ->append_section(mode_menu);
-        master_menu ->append_section(sub_menu);
+        auto *div = Gtk::make_managed<Gtk::Separator>(Gtk::Orientation::HORIZONTAL);
+        outer_box->append(*div);
 
-        m_mode_popover.set_menu_model(master_menu);
+        const std::vector<std::pair<std::string, std::string>> sub_modes = {
+            { "compact",   "Compact"   },
+            { "lowercase", "Lowercase" },
+            { "output",    "Output"    },
+        };
+
+        for (const auto &[id, label] : sub_modes) {
+            auto *btn = Gtk::make_managed<Gtk::Button>(label);
+            std::string mode_id = id;    // copy before capture
+            btn->signal_clicked().connect([this, mode_id, on_selected]() {
+                m_mode_popover.popdown();
+                on_selected(mode_id);
+            });
+            outer_box->append(*btn);
+        }
+
+        m_mode_popover.set_child(*outer_box);
         m_mode_popover.set_parent(parent_button);
     }
 
     m_mode_popover.popup();
-
 }
 
 void CustomWindow::show_about(Gtk::Window& parent_window) {
@@ -350,10 +370,15 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
         std::string final_output_path = m_selected_folder_path + "/" + filename + "." + m_selected_format;
         std::cout << "Executing download/save to: " << final_output_path << std::endl;
 
-        // Call your actual file-writing function here using 'final_output_path'
-        if (m_selected_format == "pdf") export_as_pdf(final_output_path);
-        else if (m_selected_format == "png") export_as_png(final_output_path);
-        else export_as_txt(final_output_path);
+        if (m_selected_format == "pdf") {
+            export_as_pdf(final_output_path);
+        }
+        else if (m_selected_format == "png") {
+            export_as_png(final_output_path);
+        }
+        else {
+            export_as_txt(final_output_path);
+        }
         
         // Break any active reference link to the dynamic popover before tearing down the frame
         if (this->m_file_type_popover) {

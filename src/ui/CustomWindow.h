@@ -12,7 +12,7 @@ public:
     ~CustomWindow() = default;
 
     void show_picker(Gtk::Window& parent_window);
-    void show_mode_menu(Gtk::Button& parent_button);
+    void show_mode_menu(Gtk::Button &parent_button, std::function<void(const std::string &)> on_selected);
     void show_about(Gtk::Window& parent_window);
     Gtk::Grid* create_button_grid_for_about_section();
     void fill_buffer_about(const int& choice);
