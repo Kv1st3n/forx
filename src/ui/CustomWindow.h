@@ -4,14 +4,13 @@
 #include <gtkmm.h>
 #include <string>
 #include "CustomButton.h"
+#include "ExportFiletype.h"
 
-class CustomWindow {
+class CustomWindow : public Gtk::Window, protected ExportFiletype {
 public:
     CustomWindow();
     ~CustomWindow() = default;
 
-protected:
-    void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog);
     void show_picker(Gtk::Window& parent_window);
     void show_mode_menu(Gtk::Button& parent_button);
     void show_about(Gtk::Window& parent_window);
@@ -21,6 +20,10 @@ protected:
     void on_submit();
     void show_file_types(Gtk::Button& parent_button);
     void show_settings(Gtk::Window& parent_window);
+
+protected:
+    void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog);
+
 
 private:
     Gtk::PopoverMenu m_mode_popover;
@@ -39,7 +42,9 @@ private:
     Custom_Button m_button_file_name{"Submit"};
     Custom_Button m_button_file_save{"Save"};
     std::string m_selected_folder_path;
+    std::string m_selected_format = "pdf";
 
+    void init_save_actions();
     void fill_text_tag_table();
     void fill_buffer();
 };

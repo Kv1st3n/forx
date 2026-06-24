@@ -1,5 +1,6 @@
 #include "CustomWindow.h"
 #include "CustomButton.h"
+#include "ExportFiletype.h"
 #include <iostream>
 
 CustomWindow::CustomWindow() {}
@@ -343,6 +344,7 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
         std::cout << "Executing download/save to: " << final_output_path << std::endl;
 
         // Call your actual file-writing function here using 'final_output_path'
+        export_as_pdf(final_output_path);
         
         save_window->close(); // Close popup when done
     });
@@ -359,9 +361,7 @@ void CustomWindow::on_submit() {
 void CustomWindow::show_file_types(Gtk::Button& parent_button) {
 
     if (!m_file_type_popover.get_parent()) {
-        const std::vector<std::string> file_types = {
-        "PDF", "PNG", "JPG", "CSV"
-        };
+        const std::vector<std::string> file_types = {"PDF", "PNG", "JPG", "CSV"};
 
         auto file_type_menu = Gio::Menu::create();
 
