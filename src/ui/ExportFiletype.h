@@ -11,7 +11,9 @@ public:
     void export_file();
 
 protected:
+    void export_as_png(const std::string& final_output_path);
     void export_as_pdf(const std::string& final_output_path);
+    void export_as_txt(const std::string& final_output_path);
 };
 
 #endif

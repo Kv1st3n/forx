@@ -255,22 +255,28 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
     save_grid->set_column_spacing(12);
     master_box->append(*save_grid);
 
+    // FIX: Declare widgets locally to tie them securely to the save dialogue lifespan
+    auto* local_entry = Gtk::make_managed<Gtk::Entry>();
+    auto* local_button_file_name = Gtk::make_managed<Gtk::Button>("Submit");
+    auto* local_button_file_save = Gtk::make_managed<Gtk::Button>("Save");
+
     // row 0, file name entry
     auto* type_file_name_label = Gtk::make_managed<Gtk::Label>("Save as:");
     type_file_name_label->set_halign(Gtk::Align::START);
 
-    m_entry.set_placeholder_text("Enter file name (e.g., analysis_dump)...");
+    local_entry->set_placeholder_text("Enter file name (e.g., analysis_dump)...");
     
-    m_entry.set_hexpand(true); 
-    m_entry.set_halign(Gtk::Align::FILL);
+    local_entry->set_hexpand(true); 
+    local_entry->set_halign(Gtk::Align::FILL);
 
-    m_button_file_name.set_label("Submit");
-    m_button_file_name.set_halign(Gtk::Align::END);
-    m_button_file_name.signal_clicked().connect(sigc::mem_fun(*this, &CustomWindow::on_submit));
+    local_button_file_name->set_halign(Gtk::Align::END);
+    local_button_file_name->signal_clicked().connect([local_entry]() {
+        std::cout << "User entered: " << local_entry->get_text() << std::endl;
+    });
 
     save_grid->attach(*type_file_name_label, 0, 0, 1, 1);
-    save_grid->attach(m_entry,               1, 0, 1, 1);
-    save_grid->attach(m_button_file_name,   2, 0, 1, 1);
+    save_grid->attach(*local_entry,           1, 0, 1, 1);
+    save_grid->attach(*local_button_file_name,   2, 0, 1, 1);
 
     // row 1, file format choice
     auto* type_label = Gtk::make_managed<Gtk::Label>("Select Export Format:");
@@ -315,21 +321,22 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
                 
                 chosen_path_label->set_text(m_selected_folder_path);
             }
+            catch (const Gtk::DialogError& err) {
+                std::cout << "Folder selection canceled by user." << std::endl;
+            }
             catch (const Glib::Error& err) {
-                std::cerr << "Folder selection canceled: " << err.what() << std::endl;
+                std::cerr << "Folder selection core failure: " << err.what() << std::endl;
             }
         });
     });
 
-
     // row 3, final save button
-    m_button_file_save.set_label("Save");
-    m_button_file_name.set_halign(Gtk::Align::FILL);
+    local_button_file_save->set_halign(Gtk::Align::FILL);
     // final function that saves the file
-    save_grid->attach(m_button_file_save, 2, 3, 1, 1);
+    save_grid->attach(*local_button_file_save, 2, 3, 1, 1);
 
-    m_button_file_save.signal_clicked().connect([this, save_window]() {
-        std::string filename = m_entry.get_text();
+    local_button_file_save->signal_clicked().connect([this, local_entry, save_window]() {
+        std::string filename = local_entry->get_text();
 
         if (m_selected_folder_path.empty()) {
             std::cerr << "Error: Please choose a destination folder first!" << std::endl;
@@ -340,45 +347,76 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
             return;
         }
 
-        std::string final_output_path = m_selected_folder_path + "/" + filename;
+        std::string final_output_path = m_selected_folder_path + "/" + filename + "." + m_selected_format;
         std::cout << "Executing download/save to: " << final_output_path << std::endl;
 
         // Call your actual file-writing function here using 'final_output_path'
-        export_as_pdf(final_output_path);
+        if (m_selected_format == "pdf") export_as_pdf(final_output_path);
+        else if (m_selected_format == "png") export_as_png(final_output_path);
+        else export_as_txt(final_output_path);
+        
+        // Break any active reference link to the dynamic popover before tearing down the frame
+        if (this->m_file_type_popover) {
+            this->m_file_type_popover->unparent();
+            this->m_file_type_popover = nullptr;
+        }
         
         save_window->close(); // Close popup when done
     });
 
+    // Handle background window close triggers to keep popover pointers valid
+    save_window->signal_close_request().connect([this]() {
+        if (this->m_file_type_popover) {
+            this->m_file_type_popover->unparent();
+            this->m_file_type_popover = nullptr;
+        }
+        return false; 
+    }, false);
+
     save_window->set_child(*master_box);
     save_window->present();
 }
-
-void CustomWindow::on_submit() {
-    Glib::ustring input = m_entry.get_text();
-    std::cout << "User entered: " << input << std::endl;
-}
-
 void CustomWindow::show_file_types(Gtk::Button& parent_button) {
-
-    if (!m_file_type_popover.get_parent()) {
-        const std::vector<std::string> file_types = {"PDF", "PNG", "JPG", "CSV"};
-
-        auto file_type_menu = Gio::Menu::create();
-
-        for (const auto& file_type : file_types) {
-            std::string format_id = file_type;
-            std::transform(format_id.begin(), format_id.end(), format_id.begin(), ::tolower);
-            
-            file_type_menu->append(file_type, "win.save_as_format::" + format_id);
-        }
-
-        m_file_type_popover.set_menu_model(file_type_menu);
+    if (m_file_type_popover) {
+        m_file_type_popover->unparent();
     }
 
-    m_file_type_popover.unparent();
-    m_file_type_popover.set_parent(parent_button);
-    m_file_type_popover.popup();
+    // Assign the new instance to our tracked class member pointer
+    m_file_type_popover = Gtk::make_managed<Gtk::Popover>();
+    m_file_type_popover->set_parent(parent_button);
 
+    auto* popover_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
+    popover_box->set_spacing(5);
+    popover_box->set_margin(5);
+
+    auto* btn_pdf = Gtk::make_managed<Gtk::Button>("PDF");
+    auto* btn_png = Gtk::make_managed<Gtk::Button>("PNG");
+    auto* btn_txt = Gtk::make_managed<Gtk::Button>("TXT");
+
+    btn_pdf->signal_clicked().connect([this]() {
+        this->m_selected_format = "pdf";
+        std::cout << "Format set to: PDF" << std::endl;
+        if (this->m_file_type_popover) this->m_file_type_popover->popdown(); 
+    });
+
+    btn_png->signal_clicked().connect([this]() {
+        this->m_selected_format = "png";
+        std::cout << "Format set to: PNG" << std::endl;
+        if (this->m_file_type_popover) this->m_file_type_popover->popdown();
+    });
+
+    btn_txt->signal_clicked().connect([this]() {
+        this->m_selected_format = "txt";
+        std::cout << "Format set to: TXT" << std::endl;
+        if (this->m_file_type_popover) this->m_file_type_popover->popdown();
+    });
+
+    popover_box->append(*btn_pdf);
+    popover_box->append(*btn_png);
+    popover_box->append(*btn_txt);
+
+    m_file_type_popover->set_child(*popover_box);
+    m_file_type_popover->popup();
 }
 
 void CustomWindow::show_settings(Gtk::Window& parent_window) {
