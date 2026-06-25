@@ -45,13 +45,26 @@ $(TARGET): $(OBJS)
 
 
 # simply used to test the window
-test_gtk: src/ui/window.cpp src/ui/CustomButton.cpp src/ui/CustomWindow.cpp src/ui/ExportFiletype.cpp
+test_gtk: src/ui/window.cpp \
+          src/ui/CustomButton.cpp \
+          src/ui/CustomWindow.cpp \
+          src/ui/ExportFiletype.cpp \
+          src/report/file_handler.cpp \
+          src/report/sigdb.cpp \
+          src/hexDumper.c \
+          src/scanner.c \
+          src/checksum.c
 	$(CXX) $(CXXFLAGS) $(GTK_CFLAGS) \
 	    src/ui/window.cpp \
 	    src/ui/CustomButton.cpp \
-        src/ui/CustomWindow.cpp \
-        src/ui/ExportFiletype.cpp \
-	    $(GTK_LIBS) \
+	    src/ui/CustomWindow.cpp \
+	    src/ui/ExportFiletype.cpp \
+	    src/report/file_handler.cpp \
+	    src/report/sigdb.cpp \
+	    src/hexDumper.c \
+	    src/scanner.c \
+	    src/checksum.c \
+	    $(GTK_LIBS) $(LDFLAGS) \
 	    -o test_gtk
 
 

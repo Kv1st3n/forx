@@ -1,3 +1,13 @@
+#include <sstream>
+
+extern "C" {
+    #include "hexDumper.h"
+    #include "scanner.h"
+    #include "checksum.h"
+    #include "sigdb.h"
+    #include "file_handler.h"
+}
+
 #include <iostream>
 #include <vector>
 #include <string>
