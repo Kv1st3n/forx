@@ -45,8 +45,13 @@ The tool reads binary data from a file and outputs it in a formatted grid.
 | `-1` | SHA1 Checksum | Implemented | 
 | `-2` | SHA256 Checksum | Implemented | 
 
-### Todo
-Right now the CLI is essentially done, however, the GUI is far from being completed. Because of this the GUI will not be available.
+### GUI
+To access the GUI version of this tool type:
+```zsh
+./forx --gui
+```
+
+It is still in WIP, however, the flags in CLI works in the GUI. Stuff being worked on are the settings and final CSS layout
 
 
 ### Examples
