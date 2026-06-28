@@ -1,5 +1,6 @@
 #include <sstream>
 
+// to link the back-end C stuff to the GUI
 extern "C" {
     #include "hexDumper.h"
     #include "scanner.h"

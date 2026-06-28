@@ -20,6 +20,7 @@ void CustomWindow::show_picker(Gtk::Window& parent_window) {
     dialog->open(parent_window, sigc::bind(sigc::mem_fun(*this, &CustomWindow::on_file_dialog_finish), dialog));
 }
 
+// shows all the different modes available
 void CustomWindow::show_mode_menu(Gtk::Button &parent_button, std::function<void(const std::string &)> on_selected) {
     std::cout << "CustomWindow class: Launching mode menu" << std::endl;
 
@@ -75,6 +76,7 @@ void CustomWindow::show_mode_menu(Gtk::Button &parent_button, std::function<void
     m_mode_popover.popup();
 }
 
+// shows the about the tool
 void CustomWindow::show_about(Gtk::Window& parent_window) {
     std::cout << "CustomWindow class: Launching About" << std::endl;
 
@@ -254,10 +256,13 @@ void CustomWindow::fill_buffer() {
         { "file identification, and system data analysis.\n","plain-text" },
     };
 
-    for (const auto &[text, tag] : sections)
+    for (const auto &[text, tag] : sections) {
         iterable = m_ref_text_buffer->insert_with_tag(iterable, text, tag);
+    }
 }
 
+
+// shows save menu
 void CustomWindow::show_save(Gtk::Window& parent_window) {
     auto* save_window = Gtk::make_managed<Gtk::Window>();
     save_window->set_title("Save");
@@ -401,6 +406,8 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
     save_window->set_child(*master_box);
     save_window->present();
 }
+
+// Shows the different types of file formatting that can be saved as
 void CustomWindow::show_file_types(Gtk::Button& parent_button) {
     if (m_file_type_popover) {
         m_file_type_popover->unparent();
@@ -444,6 +451,7 @@ void CustomWindow::show_file_types(Gtk::Button& parent_button) {
     m_file_type_popover->popup();
 }
 
+// wip, but general settings menu
 void CustomWindow::show_settings(Gtk::Window& parent_window) {
     auto* settings_window = Gtk::make_managed<Gtk::Window>();
     settings_window->set_title("Settings");
