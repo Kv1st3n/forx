@@ -11,12 +11,12 @@ public:
     CustomWindow();
     ~CustomWindow() = default;
 
-    void show_picker(Gtk::Window& parent_window);
+    void show_picker(Gtk::Window &parent_window, std::function<void(const std::string &)> on_file_selected);
     void show_mode_menu(Gtk::Button &parent_button, std::function<void(const std::string &)> on_selected);
     void show_about(Gtk::Window& parent_window);
     Gtk::Grid* create_button_grid_for_about_section();
     void fill_buffer_about(const int& choice);
-    void show_save(Gtk::Window& parent_window);
+    void show_save(Gtk::Window &parent_window, const std::string &content);
     void show_file_types(Gtk::Button& parent_button);
     void show_settings(Gtk::Window& parent_window);
 
@@ -42,6 +42,9 @@ private:
 
     void fill_text_tag_table();
     void fill_buffer();
+
+    std::function<void(const std::string &)> m_on_file_selected;
+    std::string m_export_content;
 };
 
 

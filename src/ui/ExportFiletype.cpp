@@ -1,59 +1,53 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <gtkmm.h>
 #include "ExportFiletype.h"
+#include <fstream>
+#include <iostream>
 
-ExportFiletype::ExportFiletype() {}
+void ExportFiletype::set_content(const std::string &content) {
+    m_content = content;
+}
 
-void ExportFiletype::export_as_txt(const std::string& final_output_path) {
-    std::ofstream out_file(final_output_path);
-
-    // current placeholder text
-
-    if (out_file.is_open()) {
-        out_file << "# Forx Forensic Log Output\n";
-        out_file << "===========================\n";
-        out_file << "00000000  23 69 6E 63 6C 75 64 65  |#include |\n"; 
-        out_file.close();
-        std::cout << "Successfully saved TXT log." << std::endl;
+void ExportFiletype::dispatch(const std::string &path, const std::string &format) {
+    if (format == "txt") {
+        export_as_txt(path);
+    }
+    else if (format == "pdf") {
+        export_as_pdf(path);
+    }
+    else if (format == "png") {
+        export_as_png(path);
+    }
+    else if (format == "csv") {
+        export_as_csv(path);
+    }
+    else {
+        std::cerr << "Unknown format: " << format << "\n";
     }
 }
 
-void ExportFiletype::export_as_png(const std::string& final_output_path) {
-    auto surface = Cairo::ImageSurface::create(Cairo::ImageSurface::Format::ARGB32, 800, 400);
-    auto cr = Cairo::Context::create(surface);
-    
-    cr->set_source_rgb(0.1, 0.1, 0.1);
-    cr->paint();
-    
-    cr->set_source_rgb(0.0, 1.0, 0.0);
-    cr->select_font_face("Sans", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-    cr->set_font_size(14.0);
-    cr->move_to(20, 40);
-    cr->show_text("FORX IMAGE EXPORT - DATA VALID");
-    
-    surface->write_to_png(final_output_path);
-    std::cout << "Successfully saved PNG visualization." << std::endl;
+void ExportFiletype::export_as_txt(const std::string &path) {
+    std::ofstream out(path);
+    if (!out) { 
+        std::cerr << "Cannot write: " << path << "\n"; 
+        return; 
+    }
+    out << m_content;
+    std::cout << "Saved TXT: " << path << "\n";
 }
 
-void ExportFiletype::export_as_pdf(const std::string& final_output_path) {
-    auto op = Gtk::PrintOperation::create();
-    op->set_export_filename(final_output_path);
+void ExportFiletype::export_as_csv(const std::string &path) {
+    std::ofstream out(path);
+    if (!out) { 
+        std::cerr << "Cannot write: " << path << "\n"; 
+        return; 
+    }
+    out << "offset,hex,ascii\n" << m_content;
+    std::cout << "Saved CSV: " << path << "\n";
+}
 
-    op->signal_begin_print().connect([op](const Glib::RefPtr<Gtk::PrintContext>& /* context */) {
-        op->set_n_pages(1); 
-    });
+void ExportFiletype::export_as_pdf(const std::string &path) {
+    std::cout << "PDF not yet implemented: " << path << "\n";
+}
 
-    op->signal_draw_page().connect([](const Glib::RefPtr<Gtk::PrintContext>& context, int page_nr) {
-        (void)page_nr;
-        auto cr = context->get_cairo_context();
-        
-        cr->select_font_face("Sans", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::NORMAL);
-        cr->set_font_size(12.0);
-        cr->move_to(50.0, 50.0);
-        cr->show_text("Raw Forensic Dump Data Output Placeholder");
-    });
-
-    op->run(Gtk::PrintOperation::Action::EXPORT);
+void ExportFiletype::export_as_png(const std::string &path) {
+    std::cout << "PNG not yet implemented: " << path << "\n";
 }

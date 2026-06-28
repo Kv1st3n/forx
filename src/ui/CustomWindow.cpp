@@ -5,8 +5,10 @@
 
 CustomWindow::CustomWindow() {}
 
-void CustomWindow::show_picker(Gtk::Window& parent_window) {
+void CustomWindow::show_picker(Gtk::Window& parent_window, std::function<void(const std::string &)> on_file_selected) {
     std::cout << "CustomWindow class: Launching file selection..." << std::endl;
+
+    m_on_file_selected = on_file_selected;
     
     auto dialog = Gtk::FileDialog::create();
     auto filters = Gio::ListStore<Gtk::FileFilter>::create();
@@ -22,57 +24,55 @@ void CustomWindow::show_picker(Gtk::Window& parent_window) {
 
 // shows all the different modes available
 void CustomWindow::show_mode_menu(Gtk::Button &parent_button, std::function<void(const std::string &)> on_selected) {
-    std::cout << "CustomWindow class: Launching mode menu" << std::endl;
-
-    if (!m_mode_popover.get_parent()) {
-
-        auto *outer_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 0);
-
-        const std::vector<std::pair<std::string, std::string>> modes = {
-            { "hex_dump",          "Hex Dump"          },
-            { "reverse_mode",      "Reverse Mode"      },
-            { "file_identifier",   "File Identifier"   },
-            { "directory_scanner", "Directory Scanner" },
-            { "string_extractor",  "String Extractor"  },
-            { "md5",               "MD5"               },
-            { "sha1",              "SHA1"              },
-            { "sha256",            "SHA256"            },
-            { "sha512",            "SHA512"            },
-        };
-
-        for (const auto &[id, label] : modes) {
-            auto *btn = Gtk::make_managed<Gtk::Button>(label);
-            std::string mode_id = id;
-            btn->signal_clicked().connect([this, mode_id, on_selected]() {
-                m_mode_popover.popdown();
-                on_selected(mode_id);
-            });
-            outer_box->append(*btn);
-        }
-
-        auto *div = Gtk::make_managed<Gtk::Separator>(Gtk::Orientation::HORIZONTAL);
-        outer_box->append(*div);
-
-        const std::vector<std::pair<std::string, std::string>> sub_modes = {
-            { "compact",   "Compact"   },
-            { "lowercase", "Lowercase" },
-            { "output",    "Output"    },
-        };
-
-        for (const auto &[id, label] : sub_modes) {
-            auto *btn = Gtk::make_managed<Gtk::Button>(label);
-            std::string mode_id = id;    // copy before capture
-            btn->signal_clicked().connect([this, mode_id, on_selected]() {
-                m_mode_popover.popdown();
-                on_selected(mode_id);
-            });
-            outer_box->append(*btn);
-        }
-
-        m_mode_popover.set_child(*outer_box);
-        m_mode_popover.set_parent(parent_button);
+    // always rebuild — ensures callback is never stale
+    if (m_mode_popover.get_parent()) {
+        m_mode_popover.unparent();
     }
 
+    auto *outer_box = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL, 0);
+
+    const std::vector<std::pair<std::string, std::string>> modes = {
+        { "hex_dump",          "Hex Dump"          },
+        { "reverse_mode",      "Reverse Mode"      },
+        { "file_identifier",   "File Identifier"   },
+        { "directory_scanner", "Directory Scanner" },
+        { "string_extractor",  "String Extractor"  },
+        { "md5",               "MD5"               },
+        { "sha1",              "SHA1"              },
+        { "sha256",            "SHA256"            },
+        { "sha512",            "SHA512"            },
+    };
+
+    for (const auto &[id, label] : modes) {
+        auto *btn = Gtk::make_managed<Gtk::Button>(label);
+        std::string mode_id = id;
+        btn->signal_clicked().connect([this, mode_id, on_selected]() {
+            m_mode_popover.popdown();
+            on_selected(mode_id);
+        });
+        outer_box->append(*btn);
+    }
+
+    auto *div = Gtk::make_managed<Gtk::Separator>(Gtk::Orientation::HORIZONTAL);
+    outer_box->append(*div);
+
+    const std::vector<std::pair<std::string, std::string>> sub_modes = {
+        { "compact",   "Compact"   },
+        { "lowercase", "Lowercase" },
+    };
+
+    for (const auto &[id, label] : sub_modes) {
+        auto *btn = Gtk::make_managed<Gtk::Button>(label);
+        std::string mode_id = id;
+        btn->signal_clicked().connect([this, mode_id, on_selected]() {
+            m_mode_popover.popdown();
+            on_selected(mode_id);
+        });
+        outer_box->append(*btn);
+    }
+
+    m_mode_popover.set_child(*outer_box);
+    m_mode_popover.set_parent(parent_button);
     m_mode_popover.popup();
 }
 
@@ -263,7 +263,9 @@ void CustomWindow::fill_buffer() {
 
 
 // shows save menu
-void CustomWindow::show_save(Gtk::Window& parent_window) {
+void CustomWindow::show_save(Gtk::Window &parent_window, const std::string &content) {
+    m_export_content = content;
+
     auto* save_window = Gtk::make_managed<Gtk::Window>();
     save_window->set_title("Save");
     save_window->set_default_size(600, 250);
@@ -280,7 +282,7 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
     save_grid->set_column_spacing(12);
     master_box->append(*save_grid);
 
-    // FIX: Declare widgets locally to tie them securely to the save dialogue lifespan
+    // Declare widgets locally to tie them securely to the save dialogue lifespan
     auto* local_entry = Gtk::make_managed<Gtk::Entry>();
     auto* local_button_file_name = Gtk::make_managed<Gtk::Button>("Submit");
     auto* local_button_file_save = Gtk::make_managed<Gtk::Button>("Save");
@@ -375,15 +377,8 @@ void CustomWindow::show_save(Gtk::Window& parent_window) {
         std::string final_output_path = m_selected_folder_path + "/" + filename + "." + m_selected_format;
         std::cout << "Executing download/save to: " << final_output_path << std::endl;
 
-        if (m_selected_format == "pdf") {
-            export_as_pdf(final_output_path);
-        }
-        else if (m_selected_format == "png") {
-            export_as_png(final_output_path);
-        }
-        else {
-            export_as_txt(final_output_path);
-        }
+        set_content(m_export_content);
+        dispatch(final_output_path, m_selected_format);
         
         // Break any active reference link to the dynamic popover before tearing down the frame
         if (this->m_file_type_popover) {
@@ -473,6 +468,8 @@ void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
         
         std::cout << "CustomWindow successfully caught file path: " << filename << std::endl;
         
+        if (m_on_file_selected)
+            m_on_file_selected(filename);
     }
     catch (const Gtk::DialogError& err) {
         std::cout << "CustomWindow: User cancelled choice. " << err.what() << std::endl;

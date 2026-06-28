@@ -4,14 +4,28 @@
 #include <stdint.h>
 #include <ctype.h>
 #include <stddef.h>
+#include <string.h> 
 
 #include "hexDumper.h"
 #include "scanner.h"
 #include "checksum.h"
 #include "file_handler.h"
 #include "sigdb.h"
+#include "window.h"
 
 int main(int argc, char **argv) {
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--gui") == 0) {
+            for (int j = i; j < argc - 1; j++)
+                argv[j] = argv[j + 1];
+            argc--;
+            gui_launch(argc, argv);
+            return 0;
+        }
+    }
+
+    sigdb_load("sigdb.txt");
 
     int   flag_hexDump = 0;
     int   flag_identify = 0;

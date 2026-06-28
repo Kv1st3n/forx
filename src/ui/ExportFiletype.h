@@ -5,15 +5,20 @@
 
 class ExportFiletype {
 public:
-    ExportFiletype();
+    ExportFiletype()  = default;
     ~ExportFiletype() = default;
 
-    void export_file();
+    void set_content(const std::string &content);
+    void dispatch(const std::string &path, const std::string &format);
 
 protected:
-    void export_as_png(const std::string& final_output_path);
-    void export_as_pdf(const std::string& final_output_path);
-    void export_as_txt(const std::string& final_output_path);
+    void export_as_txt(const std::string &path);
+    void export_as_pdf(const std::string &path);
+    void export_as_png(const std::string &path);
+    void export_as_csv(const std::string &path);
+
+private:
+    std::string m_content;
 };
 
 #endif
