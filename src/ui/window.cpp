@@ -48,7 +48,7 @@ public:
     // setup button actions
 protected:
     void on_open_clicked() {
-        m_file_picker_manager.show_picker(*this, [this](const std::string &path) {
+        m_file_picker_manager.show_picker(*this, "", [this](const std::string &path) {
             m_loaded_file = path;
             std::cout << "File loaded: " << path << "\n";
             m_hex_text_view->get_buffer()->set_text(
@@ -350,6 +350,7 @@ private:
         char *buf = nullptr;
         size_t size = 0;
         FILE *mem = open_memstream(&buf, & size);
+
         if (!mem) {
             return "error: open_memstream failed";
         }

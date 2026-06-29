@@ -2,17 +2,24 @@
 #include "CustomButton.h"
 #include "ExportFiletype.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 CustomWindow::CustomWindow() {}
 
-void CustomWindow::show_picker(Gtk::Window& parent_window, std::function<void(const std::string &)> on_file_selected) {
+void CustomWindow::show_picker(Gtk::Window& parent_window, const std::string& default_path, std::function<void(const std::string &)> on_file_selected) {
     std::cout << "CustomWindow class: Launching file selection..." << std::endl;
 
     m_on_file_selected = on_file_selected;
     
     auto dialog = Gtk::FileDialog::create();
-    auto filters = Gio::ListStore<Gtk::FileFilter>::create();
 
+    if (!default_path.empty()) {
+        auto file = Gio::File::create_for_path(default_path);
+        dialog->set_initial_file(file);
+    }
+
+    auto filters = Gio::ListStore<Gtk::FileFilter>::create();
     auto filter_any = Gtk::FileFilter::create();
     filter_any->set_name("Any files");
     filter_any->add_pattern("*");
@@ -456,9 +463,68 @@ void CustomWindow::show_settings(Gtk::Window& parent_window) {
     settings_window->set_modal(true);
 
     auto* master_window = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
+    master_window->set_margin(15);
+    master_window->set_spacing(15);
 
+    // top will be path and a text view that shows the file / path of chosen sigd.txt
+    // below two buttons, one for light mode and one for dark mode
+    auto* grid_window = Gtk::make_managed<Gtk::Grid>();
+    grid_window->set_row_spacing(10);
+    grid_window->set_column_spacing(10);
+
+    auto* path_label = Gtk::make_managed<Gtk::Label>("Choose a file");
+    path_label->set_halign(Gtk::Align::START);
+
+    const std::string default_path = "/forx/signature.txt";
+
+    auto* file_entry = Gtk::make_managed<Gtk::Entry>();
+    file_entry->set_hexpand(true);
+    file_entry->set_editable(false);
+    file_entry->set_text(default_path);
+
+    auto* browse_button = Gtk::make_managed<Gtk::Button>("Browse...");
+
+    grid_window->attach(*path_label,   0, 0, 3, 1); 
+    grid_window->attach(*file_entry,   0, 1, 2, 1); 
+    grid_window->attach(*browse_button, 2, 1, 1, 1);
+
+    // todo, make sigdb.txt default
+    browse_button->signal_clicked().connect([this, settings_window, file_entry, default_path]() {
+        show_picker(*settings_window, default_path, [file_entry](const std::string& path) {
+            file_entry->set_text(path); 
+            std::cout << "Filepath " << path << std::endl;
+        });
+    });
+
+    // light and dark mode here
+    auto* theme_label = Gtk::make_managed<Gtk::Label>("Choose theme");
+    theme_label->set_halign(Gtk::Align::START);
+
+    auto* light_button = Gtk::make_managed<Gtk::Button>("Light Mode");
+    light_button->signal_clicked().connect(sigc::mem_fun(*this, &CustomWindow::light_mode));
+
+    auto* dark_button = Gtk::make_managed<Gtk::Button>("Dark Mode");
+    dark_button->signal_clicked().connect(sigc::mem_fun(*this, &CustomWindow::dark_mode));
+
+    grid_window->attach(*theme_label,  0, 2, 3, 1);
+    grid_window->attach(*light_button, 0, 3, 1, 1);
+    grid_window->attach(*dark_button,  1, 3, 1, 1);
+
+    master_window->append(*grid_window);
     settings_window->set_child(*master_window);
     settings_window->present();
+
+
+    // path for sigdb.txt being a choice
+
+}
+
+void CustomWindow::light_mode() {
+    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = false;
+}
+
+void CustomWindow::dark_mode() {
+    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
 }
 
 void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result, const Glib::RefPtr<Gtk::FileDialog>& dialog) {
@@ -470,11 +536,9 @@ void CustomWindow::on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
         
         if (m_on_file_selected)
             m_on_file_selected(filename);
-    }
-    catch (const Gtk::DialogError& err) {
+    } catch (const Gtk::DialogError& err) {
         std::cout << "CustomWindow: User cancelled choice. " << err.what() << std::endl;
-    }
-    catch (const Glib::Error& err) {
+    } catch (const Glib::Error& err) {
         std::cout << "CustomWindow: Unexpected exception. " << err.what() << std::endl;
     }
 }
