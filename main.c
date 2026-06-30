@@ -25,8 +25,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    sigdb_load("sigdb.txt");
-
     int   flag_hexDump = 0;
     int   flag_identify = 0;
     int   flag_output = 0;

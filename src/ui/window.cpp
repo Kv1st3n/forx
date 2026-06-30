@@ -394,6 +394,7 @@ protected:
 
 extern "C" {
     void gui_launch(int argc, char **argv) {
+        sigdb_load("signature.txt");
         auto app = ForxApp::create();
         app->run(argc, argv);
     }
